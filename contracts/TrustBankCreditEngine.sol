@@ -1,15 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "./TrustBankCore.sol";
+import "./LiquidityPool.sol";
 
 /**
  * @title TrustBankCreditEngine
  * @dev Handles uncollateralized loans based on trust scores and vouching for TrustBank
  */
 contract TrustBankCreditEngine is Ownable {
+    using SafeERC20 for IERC20;
+
+    // Custom errors
+    error TrustBankCreditEngine__AddressZero();
+    error TrustBankCreditEngine__InvalidAmount();
+    error TrustBankCreditEngine__InsufficientTrustScore();
+    error TrustBankCreditEngine__ExceedsCreditLimit();
+    error TrustBankCreditEngine__OutstandingLoansExist();
+    error TrustBankCreditEngine__LoanFundingFailed();
+    error TrustBankCreditEngine__NotYourLoan();
+    error TrustBankCreditEngine__LoanAlreadyRepaid();
+    error TrustBankCreditEngine__LoanDefaulted();
+    error TrustBankCreditEngine__InsufficientBalance();
+    error TrustBankCreditEngine__LoanDoesNotExist();
+    error TrustBankCreditEngine__LoanAlreadyDefaulted();
+    error TrustBankCreditEngine__LoanNotOverdue();
+
     // Loan structures
     struct Loan {
         uint256 id;
@@ -23,8 +42,9 @@ contract TrustBankCreditEngine is Ownable {
     }
 
     // State variables
-    TrustBankCore public trustBank;
-    IERC20 public stablecoin;
+    TrustBankCore public immutable trustBank;
+    LiquidityPool public liquidityPool;
+    IERC20 public immutable stablecoin;
     mapping(uint256 => Loan) public loans;
     mapping(address => uint256[]) public userLoans;
     mapping(address => uint256) public totalBorrowed;
@@ -58,9 +78,17 @@ contract TrustBankCreditEngine is Ownable {
     );
     event ZKCreditContractSet(address indexed zkCredit);
 
-    constructor(address _trustBank, address _stablecoin) Ownable(msg.sender) {
+    constructor(
+        address _trustBank,
+        address _stablecoin,
+        address _liquidityPool
+    ) Ownable(msg.sender) {
         trustBank = TrustBankCore(_trustBank);
         stablecoin = IERC20(_stablecoin);
+        if (_liquidityPool == address(0)) {
+            revert TrustBankCreditEngine__AddressZero();
+        }
+        liquidityPool = LiquidityPool(_liquidityPool);
     }
 
     /**
@@ -69,13 +97,57 @@ contract TrustBankCreditEngine is Ownable {
      * @return loanId The ID of the created loan
      */
     function requestLoan(uint256 amount) external returns (uint256) {
-        // TODO: Implement loan request logic
-        // - Check trust score
-        // - Verify credit limit
-        // - Get required vouchers
-        // - Calculate interest rate
-        // - Create loan
-        // - Transfer funds
+        if (amount == 0) {
+            revert TrustBankCreditEngine__InvalidAmount();
+        }
+
+        // aderyn-fp-next-line(reentrancy-state-change) Safe: Only reading user's trust score
+        // Check trust score meets minimum requirement
+        uint256 trustScore = trustBank.getTotalTrustScore(msg.sender);
+        if (trustScore < MIN_TRUST_SCORE) {
+            revert TrustBankCreditEngine__InsufficientTrustScore();
+        }
+
+        // Calculate maximum loan amount for user
+        uint256 maxAmount = _calculateMaxLoanAmount(msg.sender);
+        if (amount > maxAmount) {
+            revert TrustBankCreditEngine__ExceedsCreditLimit();
+        }
+
+        // Check if user has any outstanding loans
+        if (_getOutstandingLoanCount(msg.sender) != 0) {
+            revert TrustBankCreditEngine__OutstandingLoansExist();
+        }
+
+        // Calculate interest rate based on trust score
+        uint256 interestRate = _calculateInterestRate(msg.sender, amount);
+
+        // Create loan (state changes before external calls)
+        nextLoanId++;
+        uint256 loanId = nextLoanId;
+
+        loans[loanId] = Loan({
+            id: loanId,
+            borrower: msg.sender,
+            amount: amount,
+            interestRate: interestRate,
+            dueDate: block.timestamp + LOAN_DURATION,
+            repaid: false,
+            defaulted: false,
+            vouchers: new address[](0) // Will be populated by vouchers later
+        });
+
+        userLoans[msg.sender].push(loanId);
+        totalBorrowed[msg.sender] += amount;
+
+        // Fund loan through liquidity pool (external call after state changes)
+        bool funded = liquidityPool.fundLoan(msg.sender, amount);
+        if (!funded) {
+            revert TrustBankCreditEngine__LoanFundingFailed();
+        }
+
+        emit LoanRequested(loanId, msg.sender, amount);
+        return loanId;
     }
 
     /**
@@ -83,12 +155,45 @@ contract TrustBankCreditEngine is Ownable {
      * @param loanId The loan to repay
      */
     function repayLoan(uint256 loanId) external {
-        // TODO: Implement loan repayment
-        // - Check loan exists and is active
-        // - Calculate total amount (principal + interest)
-        // - Transfer stablecoin
-        // - Update trust scores (borrower and vouchers)
-        // - Mark loan as repaid
+        Loan storage loan = loans[loanId];
+        if (loan.borrower != msg.sender) {
+            revert TrustBankCreditEngine__NotYourLoan();
+        }
+        if (loan.repaid) {
+            revert TrustBankCreditEngine__LoanAlreadyRepaid();
+        }
+        if (loan.defaulted) {
+            revert TrustBankCreditEngine__LoanDefaulted();
+        }
+
+        // Calculate total amount (principal + interest)
+        uint256 totalAmount = _calculateTotalRepayment(loanId);
+
+        loan.repaid = true;
+        totalRepaid[msg.sender] += totalAmount;
+
+   
+        if (stablecoin.balanceOf(msg.sender) < totalAmount) {
+            revert TrustBankCreditEngine__InsufficientBalance();
+        }
+
+        stablecoin.safeTransferFrom(
+            msg.sender,
+            address(liquidityPool),
+            totalAmount
+        );
+
+        // Process repayment in liquidity pool
+        liquidityPool.processRepayment(
+            msg.sender,
+            loan.amount,
+            totalAmount - loan.amount
+        );
+
+        // Update trust score (successful repayment increases trust)
+        trustBank.applyCreditBoost(msg.sender, 25); // 25 point bonus for repayment
+
+        emit LoanRepaid(loanId, msg.sender, totalAmount);
     }
 
     /**
@@ -97,11 +202,7 @@ contract TrustBankCreditEngine is Ownable {
      * @return Maximum loan amount
      */
     function getMaxLoanAmount(address user) external view returns (uint256) {
-        // TODO: Calculate based on:
-        // - Trust score
-        // - Payment history
-        // - Current outstanding loans
-        // - Vouch amounts
+        return _calculateMaxLoanAmount(user);
     }
 
     /**
@@ -114,11 +215,7 @@ contract TrustBankCreditEngine is Ownable {
         address user,
         uint256 amount
     ) external view returns (uint256) {
-        // TODO: Dynamic interest rate based on:
-        // - Trust score
-        // - Loan amount
-        // - Risk factors
-        // - Market conditions
+        return _calculateInterestRate(user, amount);
     }
 
     /**
@@ -126,11 +223,24 @@ contract TrustBankCreditEngine is Ownable {
      * @param loanId The loan to check
      */
     function checkDefault(uint256 loanId) external {
-        // TODO: Implement default logic
-        // - Check if loan is overdue
-        // - Mark as defaulted
-        // - Slash trust scores
-        // - Penalize vouchers
+        Loan storage loan = loans[loanId];
+        if (loan.borrower == address(0)) {
+            revert TrustBankCreditEngine__LoanDoesNotExist();
+        }
+        if (loan.repaid) {
+            revert TrustBankCreditEngine__LoanAlreadyRepaid();
+        }
+        if (loan.defaulted) {
+            revert TrustBankCreditEngine__LoanAlreadyDefaulted();
+        }
+        if (block.timestamp <= loan.dueDate) {
+            revert TrustBankCreditEngine__LoanNotOverdue();
+        }
+
+        // Mark as defaulted
+        loan.defaulted = true;
+
+        emit LoanDefaulted(loanId, loan.borrower, loan.amount);
     }
 
     /**
@@ -141,7 +251,7 @@ contract TrustBankCreditEngine is Ownable {
     function getUserLoans(
         address user
     ) external view returns (uint256[] memory) {
-        // TODO: Return user's loan history
+        return userLoans[user];
     }
 
     /**
@@ -152,7 +262,7 @@ contract TrustBankCreditEngine is Ownable {
     function getLoanDetails(
         uint256 loanId
     ) external view returns (Loan memory) {
-        // TODO: Return loan details
+        return loans[loanId];
     }
 
     /**
@@ -160,6 +270,9 @@ contract TrustBankCreditEngine is Ownable {
      * @param _zkCredit Address of ZK credit contract
      */
     function setZKCreditContract(address _zkCredit) external onlyOwner {
+        if (_zkCredit == address(0)) {
+            revert TrustBankCreditEngine__AddressZero();
+        }
         zkCreditContract = _zkCredit;
         emit ZKCreditContractSet(_zkCredit);
     }
@@ -226,5 +339,92 @@ contract TrustBankCreditEngine is Ownable {
         }
 
         return (maxAmount, interestRate);
+    }
+
+    // ============ HELPER FUNCTIONS ============
+
+    /**
+     * @dev Calculate maximum loan amount based on trust score
+     * @param user Address to check
+     * @return Maximum loan amount
+     */
+    function _calculateMaxLoanAmount(
+        address user
+    ) internal view returns (uint256) {
+        uint256 trustScore = trustBank.getTotalTrustScore(user);
+
+        if (trustScore < MIN_TRUST_SCORE) {
+            return 0;
+        }
+
+        // Base calculation: $10 per trust score point, capped at MAX_LOAN_AMOUNT
+        uint256 baseAmount = (trustScore * 10e6) / 100; // 10 USDC per 100 trust points
+
+        if (baseAmount > MAX_LOAN_AMOUNT) {
+            baseAmount = MAX_LOAN_AMOUNT;
+        }
+
+        return baseAmount;
+    }
+
+    /**
+     * @dev Calculate interest rate based on trust score
+     * @param user Address to check
+     * @return Interest rate per year (basis points)
+     */
+    function _calculateInterestRate(
+        address user,
+        uint256 /* amount */
+    ) internal view returns (uint256) {
+        uint256 trustScore = trustBank.getTotalTrustScore(user);
+
+        // Base rate starts at 5% and decreases with higher trust scores
+        uint256 rate = BASE_INTEREST_RATE;
+
+        if (trustScore >= 500) {
+            rate = (BASE_INTEREST_RATE * 80) / 100; // 4% for high trust
+        } else if (trustScore >= 300) {
+            rate = (BASE_INTEREST_RATE * 90) / 100; // 4.5% for medium trust
+        }
+
+        return rate;
+    }
+
+    /**
+     * @dev Get count of outstanding (unpaid, non-defaulted) loans for a user
+     * @param user Address to check
+     * @return Number of outstanding loans
+     */
+    function _getOutstandingLoanCount(
+        address user
+    ) internal view returns (uint256) {
+        uint256 count = 0;
+        uint256[] memory userLoanIds = userLoans[user];
+
+        for (uint256 i = 0; i < userLoanIds.length; i++) {
+            Loan memory loan = loans[userLoanIds[i]];
+            if (!loan.repaid && !loan.defaulted) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * @dev Calculate total repayment amount (principal + interest)
+     * @param loanId Loan ID
+     * @return Total amount to repay
+     */
+    function _calculateTotalRepayment(
+        uint256 loanId
+    ) internal view returns (uint256) {
+        Loan memory loan = loans[loanId];
+
+        // Simple interest calculation for the loan duration
+        uint256 interest = (loan.amount * loan.interestRate * LOAN_DURATION) /
+            (365 days * 1e18);
+
+        return loan.amount + interest;
     }
 }

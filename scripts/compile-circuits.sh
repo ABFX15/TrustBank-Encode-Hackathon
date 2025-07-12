@@ -1,59 +1,82 @@
 #!/bin/bash
 
-# TrustBank ZK Circuit Compilation Script
-# Compiles Circom circuits and generates Solidity verifiers
+# TrustBank ZK Circuits Compilation Script
+# Compiles all Circom circuits and generates Solidity verifiers
 
-echo "🔧 Compiling TrustBank ZK Circuits..."
+set -e
 
-# Create output directories
+echo "🔧 TrustBank ZK Circuit Compilation"
+echo "=================================="
+
+# Check dependencies
+if ! command -v circom &> /dev/null; then
+    echo "❌ Circom not found. Install with: npm install -g circom"
+    exit 1
+fi
+
+if ! command -v snarkjs &> /dev/null; then
+    echo "❌ snarkjs not found. Install with: npm install -g snarkjs"
+    exit 1
+fi
+
+# Create build directories
 mkdir -p build/circuits
 mkdir -p contracts/verifiers
 
+echo "📁 Created build directories"
+
 # Compile circuits
-echo "📦 Compiling DeFi TVL circuit..."
-circom circuits/defi_tvl.circom --r1cs --wasm --sym -o build/circuits
+echo "🔄 Compiling circuits..."
 
-echo "📦 Compiling Lending History circuit..."
-circom circuits/lending_history.circom --r1cs --wasm --sym -o build/circuits
+circuits=("defi_tvl" "lending_history" "wallet_age")
 
-echo "📦 Compiling Wallet Age circuit..."
-circom circuits/wallet_age.circom --r1cs --wasm --sym -o build/circuits
+for circuit in "${circuits[@]}"; do
+    echo "   📋 Compiling $circuit.circom..."
+    circom "circuits/$circuit.circom" --r1cs --wasm --sym -o build/circuits
+done
 
-# Generate trusted setup (Powers of Tau ceremony)
-echo "🔐 Setting up trusted ceremony..."
-snarkjs powersoftau new bn128 14 build/circuits/pot14_0000.ptau -v
-snarkjs powersoftau contribute build/circuits/pot14_0000.ptau build/circuits/pot14_0001.ptau --name="TrustBank Contribution" -v
-snarkjs powersoftau prepare phase2 build/circuits/pot14_0001.ptau build/circuits/pot14_final.ptau -v
+echo "✅ All circuits compiled successfully"
 
-# Generate proving and verification keys for each circuit
-echo "🔑 Generating proving keys..."
+# Generate trusted setup if not exists
+if [ ! -f "build/circuits/pot14_final.ptau" ]; then
+    echo "🔐 Generating trusted setup (Powers of Tau)..."
+    snarkjs powersoftau new bn128 14 build/circuits/pot14_0000.ptau > /dev/null
+    snarkjs powersoftau contribute build/circuits/pot14_0000.ptau build/circuits/pot14_0001.ptau --name="TrustBank" > /dev/null
+    snarkjs powersoftau prepare phase2 build/circuits/pot14_0001.ptau build/circuits/pot14_final.ptau > /dev/null
+    echo "✅ Trusted setup complete"
+else
+    echo "✅ Using existing trusted setup"
+fi
 
-# DeFi TVL Circuit
-snarkjs groth16 setup build/circuits/defi_tvl.r1cs build/circuits/pot14_final.ptau build/circuits/defi_tvl_0000.zkey
-snarkjs zkey contribute build/circuits/defi_tvl_0000.zkey build/circuits/defi_tvl_final.zkey --name="DeFi TVL Final" -v
-snarkjs zkey export verificationkey build/circuits/defi_tvl_final.zkey build/circuits/defi_tvl_verification_key.json
-snarkjs zkey export solidityverifier build/circuits/defi_tvl_final.zkey contracts/verifiers/DeFiTVLVerifier.sol
+# Generate circuit-specific keys and verifiers
+for circuit in "${circuits[@]}"; do
+    echo "🔑 Generating keys for $circuit..."
+    
+    # Setup
+    snarkjs groth16 setup "build/circuits/$circuit.r1cs" build/circuits/pot14_final.ptau "build/circuits/${circuit}_0000.zkey" > /dev/null
+    
+    # Contribute to ceremony
+    snarkjs zkey contribute "build/circuits/${circuit}_0000.zkey" "build/circuits/${circuit}_final.zkey" --name="$circuit" > /dev/null
+    
+    # Generate verification key
+    snarkjs zkey export verificationkey "build/circuits/${circuit}_final.zkey" "build/circuits/${circuit}_verification_key.json" > /dev/null
+    
+    # Generate Solidity verifier
+    verifier_name=$(echo "$circuit" | sed 's/_//g' | sed 's/\b\w/\U&/g')
+    snarkjs zkey export solidityverifier "build/circuits/${circuit}_final.zkey" "contracts/verifiers/${verifier_name}Verifier.sol" > /dev/null
+    
+    echo "   ✅ Generated ${verifier_name}Verifier.sol"
+done
 
-# Lending History Circuit  
-snarkjs groth16 setup build/circuits/lending_history.r1cs build/circuits/pot14_final.ptau build/circuits/lending_history_0000.zkey
-snarkjs zkey contribute build/circuits/lending_history_0000.zkey build/circuits/lending_history_final.zkey --name="Lending History Final" -v
-snarkjs zkey export verificationkey build/circuits/lending_history_final.zkey build/circuits/lending_history_verification_key.json
-snarkjs zkey export solidityverifier build/circuits/lending_history_final.zkey contracts/verifiers/LendingHistoryVerifier.sol
-
-# Wallet Age Circuit
-snarkjs groth16 setup build/circuits/wallet_age.r1cs build/circuits/pot14_final.ptau build/circuits/wallet_age_0000.zkey
-snarkjs zkey contribute build/circuits/wallet_age_0000.zkey build/circuits/wallet_age_final.zkey --name="Wallet Age Final" -v
-snarkjs zkey export verificationkey build/circuits/wallet_age_final.zkey build/circuits/wallet_age_verification_key.json
-snarkjs zkey export solidityverifier build/circuits/wallet_age_final.zkey contracts/verifiers/WalletAgeVerifier.sol
-
-echo "✅ Circuit compilation complete!"
-echo "📁 Generated files:"
-echo "   - contracts/verifiers/DeFiTVLVerifier.sol"
-echo "   - contracts/verifiers/LendingHistoryVerifier.sol" 
-echo "   - contracts/verifiers/WalletAgeVerifier.sol"
 echo ""
-echo "🚀 Next steps:"
-echo "   1. Uncomment verifier imports in ZKCreditImportProduction.sol"
-echo "   2. Deploy verifier contracts"
-echo "   3. Update ZKCreditImportProduction with verifier addresses"
-echo "   4. Test ZK proof generation and verification"
+echo "🎉 ZK Circuit compilation complete!"
+echo ""
+echo "Generated files:"
+echo "   📁 build/circuits/ - Compiled circuits and keys"
+echo "   📁 contracts/verifiers/ - Solidity verifier contracts"
+echo ""
+echo "Next steps:"
+echo "   1. Run 'node scripts/generate-proofs.js' to test proof generation"
+echo "   2. Deploy verifier contracts with your TrustBank deployment"
+echo "   3. Update ZKCreditImportProduction.sol with verifier addresses"
+echo ""

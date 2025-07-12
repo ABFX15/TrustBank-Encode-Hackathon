@@ -34,6 +34,7 @@ contract LiquidityPool is ERC20, Ownable {
     IERC20 public immutable stablecoin;
     TrustBankCore public immutable trustBank;
     YieldStrategy public immutable yieldStrategy;
+    address public creditEngine; // Address of the credit engine contract
 
     PoolStats public stats;
     mapping(address => uint256) public userDeposits; // Track individual user deposits
@@ -75,7 +76,7 @@ contract LiquidityPool is ERC20, Ownable {
     event YieldClaimed(address indexed user, uint256 amount);
 
     modifier isAuthorized() {
-        if (msg.sender != address(trustBank)) {
+        if (msg.sender != address(trustBank) && msg.sender != creditEngine) {
             revert LiquidityPool__NotAuthorized();
         }
         _;
@@ -96,6 +97,18 @@ contract LiquidityPool is ERC20, Ownable {
         stablecoin = IERC20(_stablecoin);
         trustBank = TrustBankCore(_trustBank);
         yieldStrategy = YieldStrategy(_yieldStrategy);
+    }
+
+    /**
+     * @dev Set credit engine address (owner only)
+     * @param _creditEngine Address of the credit engine contract
+     */
+    function setCreditEngine(address _creditEngine) external onlyOwner {
+        require(
+            _creditEngine != address(0),
+            "Credit engine cannot be zero address"
+        );
+        creditEngine = _creditEngine;
     }
 
     /**

@@ -61,8 +61,20 @@ async function main() {
     const poolAddress = await liquidityPool.getAddress();
     console.log(`✅ LiquidityPool deployed to: ${poolAddress}`);
 
-    // 5. Deploy Cross-Chain Infrastructure (using deployer as mock router)
-    console.log("5️⃣ Deploying TrustBankCrossChainInfrastructure_Simplified...");
+    // 5. Deploy TrustBankCreditEngine
+    console.log("5️⃣ Deploying TrustBankCreditEngine...");
+    const TrustBankCreditEngine = await ethers.getContractFactory("TrustBankCreditEngine");
+    const creditEngine = await TrustBankCreditEngine.deploy(
+        coreAddress,
+        usdcAddress,
+        poolAddress
+    );
+    await creditEngine.waitForDeployment();
+    const creditEngineAddress = await creditEngine.getAddress();
+    console.log(`✅ TrustBankCreditEngine deployed to: ${creditEngineAddress}`);
+
+    // 6. Deploy Cross-Chain Infrastructure (using deployer as mock router)
+    console.log("6️⃣ Deploying TrustBankCrossChainInfrastructure_Simplified...");
     const CrossChainInfra = await ethers.getContractFactory("TrustBankCrossChainInfrastructure_Simplified");
     const crossChainInfra = await CrossChainInfra.deploy(
         deployerAddress, // Mock Chainlink router (for testnet)
@@ -72,8 +84,8 @@ async function main() {
     const infraAddress = await crossChainInfra.getAddress();
     console.log(`✅ CrossChainInfra deployed to: ${infraAddress}`);
 
-    // 6. Deploy SimpleCrossChainYield
-    console.log("6️⃣ Deploying SimpleCrossChainYield...");
+    // 7. Deploy SimpleCrossChainYield
+    console.log("7️⃣ Deploying SimpleCrossChainYield...");
     const SimpleCrossChainYield = await ethers.getContractFactory("SimpleCrossChainYield");
     const simpleCrossChainYield = await SimpleCrossChainYield.deploy(
         infraAddress,
@@ -83,8 +95,12 @@ async function main() {
     const yieldFarmingAddress = await simpleCrossChainYield.getAddress();
     console.log(`✅ SimpleCrossChainYield deployed to: ${yieldFarmingAddress}`);
 
-    // 7. Configure contracts
+    // 8. Configure contracts
     console.log("\n⚙️ Configuring contracts...");
+
+    // Set credit engine in liquidity pool
+    console.log("Setting credit engine in LiquidityPool...");
+    await liquidityPool.setCreditEngine(creditEngineAddress);
 
     // Enable cross-chain in YieldStrategy
     console.log("Enabling cross-chain in YieldStrategy...");
@@ -99,6 +115,7 @@ async function main() {
     console.log("\n📋 Contract Addresses:");
     console.log(`MockUSDC:                    ${usdcAddress}`);
     console.log(`TrustBankCore:               ${coreAddress}`);
+    console.log(`TrustBankCreditEngine:       ${creditEngineAddress}`);
     console.log(`YieldStrategy:               ${yieldAddress}`);
     console.log(`LiquidityPool:               ${poolAddress}`);
     console.log(`CrossChainInfra:             ${infraAddress}`);
@@ -119,6 +136,7 @@ async function main() {
         contracts: {
             MockUSDC: usdcAddress,
             TrustBankCore: coreAddress,
+            TrustBankCreditEngine: creditEngineAddress,
             YieldStrategy: yieldAddress,
             LiquidityPool: poolAddress,
             CrossChainInfra: infraAddress,

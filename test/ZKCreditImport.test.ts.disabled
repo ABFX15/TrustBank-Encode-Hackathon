@@ -39,8 +39,7 @@ describe("ZKCreditImport", function () {
         const ZKCreditImportProduction = await ethers.getContractFactory("ZKCreditImportProduction");
         zkCreditImport = await ZKCreditImportProduction.deploy(
             vouchPayCore.target,
-            creditEngine.target,
-            zkVerificationKey
+            creditEngine.target
         );
 
         // Connect contracts
