@@ -25,12 +25,12 @@ export const config = getDefaultConfig({
         etherlinkTestnet,
         ...(process.env.NODE_ENV === 'development' ? [hardhat, sepolia] : []),
     ],
-    transports: {
+    transports: process.env.NODE_ENV === 'development' ? {
         [etherlinkTestnet.id]: http(),
-        ...(process.env.NODE_ENV === 'development' ? {
-            [hardhat.id]: http(),
-            [sepolia.id]: http(),
-        } : {}),
+        [hardhat.id]: http(),
+        [sepolia.id]: http(),
+    } : {
+        [etherlinkTestnet.id]: http(),
     },
 });
 

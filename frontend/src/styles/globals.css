@@ -95,6 +95,22 @@
            transition-all duration-300;
   }
 
+  .input-premium {
+    @apply w-full px-4 py-3 bg-dark-800/80 border border-cyan-600/30 
+           rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 
+           focus:border-cyan-500 text-gray-100 placeholder-gray-400 
+           transition-all duration-300 backdrop-blur-sm
+           hover:border-cyan-500/50 hover:bg-dark-800/90;
+  }
+
+  .input-group {
+    @apply space-y-2;
+  }
+
+  .input-group label {
+    @apply text-sm font-medium text-gray-300 block;
+  }
+
   .badge {
     @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
   }
@@ -318,4 +334,80 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Shooting star animation for space background */
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(300px) translateY(300px) scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-shooting-star {
+  animation: shootingStar 1.5s linear forwards;
+}
+
+/* Enhanced space theme animations */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes nebula-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(10px, -10px) scale(1.05);
+  }
+  66% {
+    transform: translate(-10px, 10px) scale(0.95);
+  }
+}
+
+.animate-nebula-drift {
+  animation: nebula-drift 20s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float 6s ease-in-out infinite reverse;
 }
