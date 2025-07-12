@@ -5,7 +5,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./TrustBankCrossChainInfrastructure.sol";
+import "./TrustBankCCIPCrossChain.sol";
 
 /**
  * @title YieldStrategy
@@ -24,7 +24,8 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     error YieldStrategy__AllocationExceedsLimit();
     error YieldStrategy__NoStrategiesAvailable();
     error YieldStrategy__WithdrawFailed();
-
+    error YieldStrategy__AddressZeroTreasury();
+    error YieldStrategy__FeeTooHigh();
 
     // Strategy structures
     struct Strategy {
@@ -46,8 +47,14 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     uint256 public nextStrategyId;
     uint256 public totalAllocation; // Total allocation across all strategies
 
+    // Protocol fee variables
+    address public protocolTreasury;
+    uint256 public yieldFeeBps; // Fee on yield (basis points)
+    uint256 public withdrawFeeBps; // Fee on withdrawals (basis points)
+    uint256 public constant MAX_FEE_BPS = 1000; // 10% max
+
     // Cross-chain state variables
-    TrustBankCrossChainInfrastructure public crossChainInfra;
+    TrustBankCCIPCrossChain public crossChainInfra;
     bool public crossChainEnabled;
 
     // Constants
@@ -75,11 +82,42 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     event Rebalanced(uint256 timestamp);
     event EmergencyWithdrawal(uint256 amount);
 
-    constructor(address _stablecoin) Ownable(msg.sender) {
+    constructor(
+        address _stablecoin,
+        address _protocolTreasury,
+        uint256 _yieldFeeBps,
+        uint256 _withdrawFeeBps
+    ) Ownable(msg.sender) {
         if (_stablecoin == address(0)) {
             revert YieldStrategy__AddressZeroStablecoin();
         }
+        if (_protocolTreasury == address(0)) {
+            revert YieldStrategy__AddressZeroTreasury();
+        }
+        if (_yieldFeeBps > MAX_FEE_BPS || _withdrawFeeBps > MAX_FEE_BPS) {
+            revert YieldStrategy__FeeTooHigh();
+        }
         stablecoin = IERC20(_stablecoin);
+        protocolTreasury = _protocolTreasury;
+        yieldFeeBps = _yieldFeeBps;
+        withdrawFeeBps = _withdrawFeeBps;
+    }
+
+    /**
+     * @dev Set protocol fee parameters (owner only)
+     */
+    function setProtocolFees(
+        address _treasury,
+        uint256 _yieldFeeBps,
+        uint256 _withdrawFeeBps
+    ) external onlyOwner {
+        if (_treasury == address(0))
+            revert YieldStrategy__AddressZeroTreasury();
+        if (_yieldFeeBps > MAX_FEE_BPS || _withdrawFeeBps > MAX_FEE_BPS)
+            revert YieldStrategy__FeeTooHigh();
+        protocolTreasury = _treasury;
+        yieldFeeBps = _yieldFeeBps;
+        withdrawFeeBps = _withdrawFeeBps;
     }
 
     /**
@@ -183,14 +221,21 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
             revert YieldStrategy__InsufficientBalance();
         }
 
+        // Calculate withdrawal fee
+        uint256 fee = (amount * withdrawFeeBps) / BASIS_POINTS_DIVISOR;
+        uint256 netAmount = amount - fee;
+
         userDeposits[msg.sender] = currentBalance - amount;
         userLastUpdate[msg.sender] = block.timestamp;
         totalDeposits -= amount;
 
         _withdrawFromStrategies(amount);
-        stablecoin.safeTransfer(msg.sender, amount);
+        if (fee > 0) {
+            stablecoin.safeTransfer(protocolTreasury, fee);
+        }
+        stablecoin.safeTransfer(msg.sender, netAmount);
 
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(msg.sender, netAmount);
     }
 
     /**
@@ -198,6 +243,7 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      */
     function harvestYield() external {
         uint256 totalHarvested = 0;
+        uint256 protocolFee = 0;
 
         for (uint256 i = 0; i < nextStrategyId; i++) {
             Strategy storage strategy = strategies[i];
@@ -208,12 +254,24 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
                     DEFAULT_APY *
                     timeElapsed) / (WEI_PRECISION * SECONDS_PER_YEAR);
 
+                totalYieldEarned += totalHarvested;
+                // Calculate protocol fee on yield
+                uint256 fee = (yieldEarned * yieldFeeBps) /
+                    BASIS_POINTS_DIVISOR;
+                if (fee > 0) {
+                    protocolFee += fee;
+                    yieldEarned -= fee;
+                }
+
                 strategy.lastHarvest = block.timestamp;
                 totalHarvested += yieldEarned;
             }
         }
 
-        totalYieldEarned += totalHarvested;
+        // Transfer protocol fee to treasury if any
+        if (protocolFee > 0) {
+            stablecoin.safeTransfer(protocolTreasury, protocolFee);
+        }
 
         emit YieldHarvested(totalHarvested);
     }
@@ -296,20 +354,24 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @param _crossChainInfra Address of simplified cross-chain infrastructure
      */
     function enableCrossChain(address _crossChainInfra) external onlyOwner {
-        crossChainInfra = TrustBankCrossChainInfrastructure(
-            payable(_crossChainInfra)
-        );
+        crossChainInfra = TrustBankCCIPCrossChain(_crossChainInfra);
         crossChainEnabled = _crossChainInfra != address(0);
     }
 
     /**
      * @dev Deploy funds to yield opportunities on other chains
-     * @param chainId Target chain ID
+     * @param destChainSelector Chainlink CCIP destination chain selector
+     * @param receiver Receiver address on destination chain
      * @param amount Amount to deploy
+     * @param data Arbitrary payload (e.g. yield strategy info)
+     * @param feeToken Fee token address (0 for native)
      */
     function deployCrossChain(
-        uint256 chainId,
-        uint256 amount
+        uint64 destChainSelector,
+        address receiver,
+        uint256 amount,
+        bytes calldata data,
+        address feeToken
     ) external payable onlyOwner nonReentrant {
         if (!crossChainEnabled) {
             revert YieldStrategy__StrategyNotActive();
@@ -317,33 +379,23 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
         if (amount > stablecoin.balanceOf(address(this))) {
             revert YieldStrategy__InsufficientBalance();
         }
-
-        // Approve and send cross-chain
         stablecoin.approve(address(crossChainInfra), amount);
-
-        // aderyn-ignore-next-line(unsafe-casting)
-        uint64 chainSelector = uint64(chainId);
-
-        crossChainInfra.sendCrossChain(
-            chainSelector,
-            address(this),
+        crossChainInfra.sendCCIPMessage{value: msg.value}(
+            destChainSelector,
+            abi.encode(receiver),
             amount,
-            TrustBankCrossChainInfrastructure
-                .MessageType
-                .YIELD_DEPOSIT,
-            abi.encode("YIELD_DEPLOY")
+            data,
+            feeToken
         );
     }
 
     /**
      * @dev Get cross-chain deployments (simplified)
      */
-    function getTotalCrossChainDeployments() external view returns (uint256) {
-        if (!crossChainEnabled) return 0;
-
-        (uint256 totalVolume, , , , ) = crossChainInfra.getStats();
-        return totalVolume;
-    }
+    // function getTotalCrossChainDeployments() external view returns (uint256) {
+    //     // Not implemented in CCIP version
+    //     return 0;
+    // }
 
     /**
      * @dev Internal function to calculate user balance with accrued yield

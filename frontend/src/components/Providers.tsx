@@ -5,6 +5,7 @@ import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { config } from "@/config/wagmi";
 import { ReactNode, useState, useEffect } from "react";
+import { ClientOnly } from "@/components/ClientOnly";
 
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -38,18 +39,20 @@ export function Providers({ children }: { children: ReactNode }) {
   }
 
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor: "#f59e0b",
-            accentColorForeground: "white",
-            borderRadius: "medium",
-          })}
-        >
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ClientOnly>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: "#06b6d4", // cyan-500
+              accentColorForeground: "#0e172a", // slate-900 (dark text)
+              borderRadius: "medium",
+            })}
+          >
+            {children}
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ClientOnly>
   );
 }

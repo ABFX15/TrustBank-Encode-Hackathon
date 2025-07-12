@@ -97,12 +97,29 @@ contract TrustBankCreditEngine is Ownable {
      * @return loanId The ID of the created loan
      */
     function requestLoan(uint256 amount) external returns (uint256) {
+
+        nextLoanId++;
+        uint256 loanId = nextLoanId;
+
+        uint256 interestRate = _calculateInterestRate(msg.sender, amount);
+
+        loans[loanId] = Loan({
+            id: loanId,
+            borrower: msg.sender,
+            amount: amount,
+            interestRate: interestRate,
+            dueDate: block.timestamp + LOAN_DURATION,
+            repaid: false,
+            defaulted: false,
+            vouchers: new address[](0) // Will be populated by vouchers later
+        });
+
+        userLoans[msg.sender].push(loanId);
+        totalBorrowed[msg.sender] += amount;
         if (amount == 0) {
             revert TrustBankCreditEngine__InvalidAmount();
         }
 
-        // aderyn-fp-next-line(reentrancy-state-change) Safe: Only reading user's trust score
-        // Check trust score meets minimum requirement
         uint256 trustScore = trustBank.getTotalTrustScore(msg.sender);
         if (trustScore < MIN_TRUST_SCORE) {
             revert TrustBankCreditEngine__InsufficientTrustScore();
@@ -119,28 +136,6 @@ contract TrustBankCreditEngine is Ownable {
             revert TrustBankCreditEngine__OutstandingLoansExist();
         }
 
-        // Calculate interest rate based on trust score
-        uint256 interestRate = _calculateInterestRate(msg.sender, amount);
-
-        // Create loan (state changes before external calls)
-        nextLoanId++;
-        uint256 loanId = nextLoanId;
-
-        loans[loanId] = Loan({
-            id: loanId,
-            borrower: msg.sender,
-            amount: amount,
-            interestRate: interestRate,
-            dueDate: block.timestamp + LOAN_DURATION,
-            repaid: false,
-            defaulted: false,
-            vouchers: new address[](0) // Will be populated by vouchers later
-        });
-
-        userLoans[msg.sender].push(loanId);
-        totalBorrowed[msg.sender] += amount;
-
-        // Fund loan through liquidity pool (external call after state changes)
         bool funded = liquidityPool.fundLoan(msg.sender, amount);
         if (!funded) {
             revert TrustBankCreditEngine__LoanFundingFailed();

@@ -13,6 +13,7 @@ import {
 import { LendingInterface } from "./LendingInterface";
 import { TrustNetwork } from "./TrustNetwork";
 import { useNotification } from "./Notification";
+import { UserYieldDashboard } from "@/components/UserYieldDashboard";
 
 interface Tab {
   id: string;
@@ -150,25 +151,7 @@ export function AnalyticsTab() {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card-premium p-6">
-          <h3 className="text-lg font-semibold text-cyan-400 mb-4 font-tech">
-            Portfolio Overview
-          </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Total Deposited</span>
-              <span className="text-white font-mono">$0.00</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Total Borrowed</span>
-              <span className="text-white font-mono">$0.00</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Net Yield</span>
-              <span className="text-green-400 font-mono">+$0.00</span>
-            </div>
-          </div>
-        </div>
+        <UserYieldDashboard />
         <div className="card-premium p-6">
           <h3 className="text-lg font-semibold text-cyan-400 mb-4 font-tech">
             Trust Network

@@ -119,10 +119,16 @@ function getAvailableLiquidity() external view returns (uint256);
 
 ```solidity
 // Auto-yield generation across DeFi protocols
+// Now includes protocol fees on yield and withdrawals
 function deposit(uint256 amount) external;
 function withdraw(uint256 amount) external;
 function harvestYield() external;
 function getCurrentAPY() external view returns (uint256);
+function setProtocolFees(address treasury, uint256 yieldFeeBps, uint256 withdrawFeeBps) external;
+// Fee parameters:
+// - yieldFeeBps: Fee (in basis points, max 10%) on yield harvested (sent to protocol treasury)
+// - withdrawFeeBps: Fee (in basis points, max 10%) on user withdrawals (sent to protocol treasury)
+// - protocolTreasury: Address receiving protocol fees
 ```
 
 #### 6. `TrustBankZKCredit.sol` & `ZKCreditImportProduction.sol`
