@@ -37,14 +37,14 @@ export const config = getDefaultConfig({
 // Contract addresses (these will be populated after deployment)
 export const CONTRACT_ADDRESSES = {
     [etherlinkTestnet.id]: {
-        MockUSDC: '0x8beC0937A6668FAA3a844047F1A9BaE0dCe0c759',
+        MockUSDC: '0x687F68C22fbA79DbF6f45526d0a69cc9528302e2',
         TrustBankCore: '0x93AdBDd7c4af41ADe02dDF64c19660185B716467',
         TrustBankCreditEngine: '0x93AdBDd7c4af41ADe02dDF64c19660185B716467', // Same as TrustBankCore
         YieldStrategy: '0x3Bd6A15837D15cd87cA0db6dEBE4Dd3A1C5428ae',
         LiquidityPool: '0xc6AC40b9D695bDd472d84c0170f18C545a1B29b1',
         CrossChainInfra: '0x384B345a9E4561cB03d19FeBA12fCECD3A7bDa92',
         SimpleCrossChainYield: '0x0C319b5d3e894A60607c113bE97e482129De52AF',
-        TrustBankCCIPCrossChain: 'REPLACE_WITH_DEPLOYED_CCIP_ADDRESS',
+        TrustBankCCIPCrossChain: '0x687F68C22fbA79DbF6f45526d0a69cc9528302e2',
     },
     // Local hardhat network addresses
     [1337]: {

@@ -12,8 +12,8 @@ async function main() {
 
     const TrustBankCCIPCrossChain = await ethers.getContractFactory("TrustBankCCIPCrossChain");
     const ccip = await TrustBankCCIPCrossChain.deploy(CCIP_ROUTER, STABLECOIN);
-    await ccip.deployed();
-    console.log("TrustBankCCIPCrossChain deployed to:", ccip.address);
+    // The deploy() promise resolves when the contract is mined on Etherlink
+    console.log("TrustBankCCIPCrossChain deployed to:", ccip.target);
 }
 
 main().catch((error) => {
