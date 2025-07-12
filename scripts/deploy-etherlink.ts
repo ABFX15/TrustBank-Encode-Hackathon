@@ -73,11 +73,17 @@ async function main() {
     const creditEngineAddress = await creditEngine.getAddress();
     console.log(`✅ TrustBankCreditEngine deployed to: ${creditEngineAddress}`);
 
-    // 6. Deploy Cross-Chain Infrastructure (using deployer as mock router)
-    console.log("6️⃣ Deploying TrustBankCrossChainInfrastructure_Simplified...");
-    const CrossChainInfra = await ethers.getContractFactory("TrustBankCrossChainInfrastructure_Simplified");
+    // 6. Deploy Cross-Chain Infrastructure
+    console.log("6️⃣ Deploying TrustBankCrossChainInfrastructure_Fallback...");
+    const CrossChainInfra = await ethers.getContractFactory("TrustBankCrossChainInfrastructure_Fallback");
+
+    // For Etherlink testnet, we'll use mock addresses since CCIP may not be available
+    const mockRouter = deployerAddress; // Mock router for testnet
+    const mockLinkToken = deployerAddress; // Mock LINK token for testnet
+
     const crossChainInfra = await CrossChainInfra.deploy(
-        deployerAddress, // Mock Chainlink router (for testnet)
+        mockRouter,
+        mockLinkToken,
         usdcAddress
     );
     await crossChainInfra.waitForDeployment();

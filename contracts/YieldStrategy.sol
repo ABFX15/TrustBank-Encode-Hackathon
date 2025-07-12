@@ -5,7 +5,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./TrustBankCrossChainInfrastructure_Simplified.sol";
+import "./TrustBankCrossChainInfrastructure.sol";
 
 /**
  * @title YieldStrategy
@@ -23,6 +23,8 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     error YieldStrategy__StrategyNotActive();
     error YieldStrategy__AllocationExceedsLimit();
     error YieldStrategy__NoStrategiesAvailable();
+    error YieldStrategy__WithdrawFailed();
+
 
     // Strategy structures
     struct Strategy {
@@ -45,7 +47,7 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     uint256 public totalAllocation; // Total allocation across all strategies
 
     // Cross-chain state variables
-    TrustBankCrossChainInfrastructure_Simplified public crossChainInfra;
+    TrustBankCrossChainInfrastructure public crossChainInfra;
     bool public crossChainEnabled;
 
     // Constants
@@ -294,7 +296,7 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @param _crossChainInfra Address of simplified cross-chain infrastructure
      */
     function enableCrossChain(address _crossChainInfra) external onlyOwner {
-        crossChainInfra = TrustBankCrossChainInfrastructure_Simplified(
+        crossChainInfra = TrustBankCrossChainInfrastructure(
             payable(_crossChainInfra)
         );
         crossChainEnabled = _crossChainInfra != address(0);
@@ -318,10 +320,17 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
 
         // Approve and send cross-chain
         stablecoin.approve(address(crossChainInfra), amount);
-        crossChainInfra.sendCrossChain{value: msg.value}(
-            chainId,
+
+        // aderyn-ignore-next-line(unsafe-casting)
+        uint64 chainSelector = uint64(chainId);
+
+        crossChainInfra.sendCrossChain(
+            chainSelector,
             address(this),
             amount,
+            TrustBankCrossChainInfrastructure
+                .MessageType
+                .YIELD_DEPOSIT,
             abi.encode("YIELD_DEPLOY")
         );
     }
@@ -330,7 +339,10 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @dev Get cross-chain deployments (simplified)
      */
     function getTotalCrossChainDeployments() external view returns (uint256) {
-        return crossChainEnabled ? crossChainInfra.totalBridgedVolume() : 0;
+        if (!crossChainEnabled) return 0;
+
+        (uint256 totalVolume, , , , ) = crossChainInfra.getStats();
+        return totalVolume;
     }
 
     /**
@@ -473,5 +485,15 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      */
     function getStrategyCount() external view returns (uint256) {
         return nextStrategyId;
+    }
+
+    function withdrawEth() external onlyOwner {
+        uint256 balance = address(this).balance;
+        if (balance <= 0) revert YieldStrategy__InsufficientBalance();
+        (bool success, ) = owner().call{value: balance}("");
+        if (!success) {
+            revert YieldStrategy__WithdrawFailed();
+        }
+        emit EmergencyWithdrawal(balance);
     }
 }
