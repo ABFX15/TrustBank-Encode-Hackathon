@@ -83,18 +83,18 @@ contract LiquidityPool is ERC20, Ownable {
 
     constructor(
         address _stablecoin,
-        address _vouchPay,
+        address _trustBank,
         address _yieldStrategy
-    ) ERC20("VouchPay LP Token", "vLP") Ownable(msg.sender) {
+    ) ERC20("TrustBank LP Token", "tLP") Ownable(msg.sender) {
         if (
             _stablecoin == address(0) ||
-            _vouchPay == address(0) ||
+            _trustBank == address(0) ||
             _yieldStrategy == address(0)
         ) {
             revert LiquidityPool__AddressZero();
         }
         stablecoin = IERC20(_stablecoin);
-        trustBank = TrustBankCore(_vouchPay);
+        trustBank = TrustBankCore(_trustBank);
         yieldStrategy = YieldStrategy(_yieldStrategy);
     }
 

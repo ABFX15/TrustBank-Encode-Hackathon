@@ -115,8 +115,7 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @dev Deposit stablecoin for yield farming
      * @param amount Amount to deposit
      */
-    function deposit(uint256 amount) external {
-
+    function deposit(uint256 amount) external nonReentrant {
         if (amount == 0) {
             revert YieldStrategy__InsufficientAmount();
         }
@@ -141,7 +140,7 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @dev Withdraw stablecoin with earned yield
      * @param amount Amount to withdraw
      */
-    function withdraw(uint256 amount) external {
+    function withdraw(uint256 amount) external nonReentrant {
         if (amount == 0) {
             revert YieldStrategy__InsufficientAmount();
         }
@@ -190,9 +189,13 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @dev Rebalance allocations across strategies
      */
     function rebalance() external nonReentrant onlyOwner {
+        // Effects first - harvest yield internally
         _internalHarvestYield();
+
+        // Interactions - get balance (this is safe as it's a view call)
         uint256 contractBalance = stablecoin.balanceOf(address(this));
 
+        // Effects - update strategy allocations
         for (uint256 i = 0; i < nextStrategyId; i++) {
             Strategy storage strategy = strategies[i];
             if (strategy.active) {
@@ -250,7 +253,6 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
         }
         uint256 totalBalance = stablecoin.balanceOf(address(this));
 
-
         if (totalBalance > 0) {
             stablecoin.safeTransfer(owner(), totalBalance);
         }
@@ -292,7 +294,6 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
         for (uint256 i = 0; i < nextStrategyId; i++) {
             Strategy storage strategy = strategies[i];
             if (strategy.active && strategy.currentDeposit > 0) {
-
                 uint256 timeElapsed = block.timestamp - strategy.lastHarvest;
                 uint256 yieldEarned = (strategy.currentDeposit *
                     DEFAULT_APY *

@@ -16,7 +16,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  */
 contract TrustBankCore is Ownable {
     using SafeERC20 for IERC20;
-    
+
     // Custom errors
     error UnauthorizedZKContract();
     error TrustBankCore__AddressZeroStablecoin();
@@ -88,7 +88,12 @@ contract TrustBankCore is Ownable {
         uint256 amount,
         string memory message
     ) external {
+        uint256 balance = stablecoin.balanceOf(msg.sender);
+        if (balance < amount) revert TrustBankCore__InsufficientBalance();
+
         nextPaymentId++;
+        paymentCount[msg.sender]++; 
+
         payments[nextPaymentId] = Payment({
             from: msg.sender,
             to: to,
@@ -97,12 +102,12 @@ contract TrustBankCore is Ownable {
             timestamp: block.timestamp,
             completed: false
         });
+        payments[nextPaymentId].completed = true;
+
         trustScores[msg.sender] = _calculateTrustScore(msg.sender);
 
-        uint256 balance = stablecoin.balanceOf(msg.sender);
-        if (balance < amount) revert TrustBankCore__InsufficientBalance();
-
         stablecoin.safeTransferFrom(msg.sender, to, amount);
+
         emit PaymentSent(nextPaymentId, msg.sender, to, amount);
     }
 
