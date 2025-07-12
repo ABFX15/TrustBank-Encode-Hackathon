@@ -44,6 +44,7 @@ export const CONTRACT_ADDRESSES = {
         LiquidityPool: '0xc6AC40b9D695bDd472d84c0170f18C545a1B29b1',
         CrossChainInfra: '0x384B345a9E4561cB03d19FeBA12fCECD3A7bDa92',
         SimpleCrossChainYield: '0x0C319b5d3e894A60607c113bE97e482129De52AF',
+        TrustBankCCIPCrossChain: 'REPLACE_WITH_DEPLOYED_CCIP_ADDRESS',
     },
     // Local hardhat network addresses
     [1337]: {
@@ -54,6 +55,7 @@ export const CONTRACT_ADDRESSES = {
         LiquidityPool: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
         CrossChainInfra: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707',
         SimpleCrossChainYield: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
+        TrustBankCCIPCrossChain: 'REPLACE_WITH_DEPLOYED_CCIP_ADDRESS',
     },
     // Add other networks as needed
 } as const;

@@ -1523,23 +1523,10 @@ export const LiquidityPoolABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "trustBank",
-    "outputs": [
-      {
-        "internalType": "contract TrustBankCore",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "user",
         "type": "address"
       }
     ],
@@ -1558,7 +1545,7 @@ export const LiquidityPoolABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "user",
         "type": "address"
       }
     ],
@@ -3959,4 +3946,6 @@ export const SimpleCrossChainYieldABI = [
     "type": "receive"
   }
 ] as const;
+
+export { default as TrustBankCCIPCrossChainABI } from './abis/TrustBankCCIPCrossChain.json';
 

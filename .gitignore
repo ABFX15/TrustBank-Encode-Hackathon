@@ -15,3 +15,9 @@ node_modules
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-31337
+
+# md files 
+CROSS_CHAIN_COMPARISONS.md
+FRONTEND_SETUP_COMPLETE.md 
+PROJECT_STATUS.md
+ZK_INTEGRATION_STATUS.md 
