@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import futuristic Web3/crypto fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
+
+@layer base {
+  html {
+    font-family: "Rajdhani", "Exo 2", "Inter", sans-serif;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
+  }
+
+  body {
+    @apply bg-dark-950 text-gray-100 min-h-screen;
+    font-family: "Rajdhani", "Exo 2", "Inter", sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    background-image: 
+      /* Animated gradient orbs */ radial-gradient(
+        circle at 20% 20%,
+        rgba(34, 211, 238, 0.15) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(8, 145, 178, 0.12) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 40% 60%,
+        rgba(59, 130, 246, 0.08) 0%,
+        transparent 35%
+      ),
+      /* Subtle grid pattern */
+        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+      /* Base gradient */
+        linear-gradient(
+          135deg,
+          rgba(13, 13, 13, 1) 0%,
+          rgba(23, 23, 23, 0.95) 50%,
+          rgba(13, 13, 13, 1) 100%
+        );
+    background-size: 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px,
+      100% 100%;
+    background-attachment: fixed;
+  }
+
+  * {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-cyan-gradient text-dark-900 font-semibold py-3 px-6 rounded-lg 
+           transition-all duration-300 shadow-cyan hover:shadow-cyan-lg 
+           hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed 
+           disabled:hover:scale-100 border border-cyan-600/20;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-800 hover:bg-dark-700 text-cyan-400 font-medium py-3 px-6 
+           rounded-lg transition-all duration-300 border border-cyan-600/20 
+           hover:border-cyan-500/40 hover:shadow-cyan;
+  }
+
+  .btn-outline {
+    @apply border border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 
+           font-medium py-3 px-6 rounded-lg transition-all duration-300 
+           hover:shadow-cyan hover:border-cyan-400;
+  }
+
+  .card {
+    @apply bg-dark-900/80 backdrop-blur-sm rounded-xl shadow-dark 
+           border border-cyan-600/10 p-6 hover:border-cyan-500/20 
+           transition-all duration-300 hover:shadow-cyan;
+  }
+
+  .card-premium {
+    @apply card bg-gradient-to-br from-dark-900 to-dark-800 
+           border-cyan-600/20 shadow-cyan-lg;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-dark-800 border border-cyan-600/20 
+           rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 
+           focus:border-cyan-500 text-gray-100 placeholder-gray-400 
+           transition-all duration-300;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-emerald-900/30 text-emerald-400 border border-emerald-500/20;
+  }
+
+  .badge-warning {
+    @apply badge bg-blue-900/30 text-blue-400 border border-blue-500/20;
+  }
+
+  .badge-error {
+    @apply badge bg-red-900/30 text-red-400 border border-red-500/20;
+  }
+
+  .badge-cyan {
+    @apply badge bg-cyan-900/30 text-cyan-400 border border-cyan-500/20;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent;
+    font-family: "Orbitron", "Exo 2", monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-title {
+    @apply text-5xl md:text-6xl lg:text-8xl font-bold gradient-text 
+           leading-tight tracking-tight;
+    font-family: "Orbitron", "Exo 2", serif;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 40px rgba(34, 211, 238, 0.3);
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+
+  /* Web3/Crypto Typography Classes */
+  .text-cyber {
+    font-family: "Orbitron", monospace;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .text-tech {
+    font-family: "Rajdhani", "Exo 2", sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .text-futura {
+    font-family: "Exo 2", "Rajdhani", sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .text-mono-tech {
+    font-family: "Space Mono", "JetBrains Mono", monospace;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 20px rgba(34, 211, 238, 0.5),
+        0 0 30px rgba(34, 211, 238, 0.3), 0 0 40px rgba(34, 211, 238, 0.2);
+    }
+    to {
+      text-shadow: 0 0 30px rgba(34, 211, 238, 0.8),
+        0 0 50px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.3);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(245, 158, 11, 0.4),
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+  }
+
+  .glow-border {
+    @apply border border-cyan-500/50 shadow-cyan;
+  }
+
+  .glass-effect {
+    @apply bg-dark-900/20 backdrop-blur-md border border-cyan-600/10;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cyan-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-cyan-500;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
+  }
+}
+
+@keyframes typewriter-cursor {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Typewriter animations */
+.typewriter-container {
+  @apply inline-block;
+}
+
+.typewriter-text {
+  @apply border-r-2 border-cyan-400 pr-1;
+  animation: typewriter-cursor 1s infinite;
+}
+
+.welcome-fade-in {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.connect-button-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Enhanced float animation for welcome page */
+@keyframes float-welcome {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+.animate-float-welcome {
+  animation: float-welcome 6s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-text {
+  background: linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4, #22d3ee);
+  background-size: 300% 300%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

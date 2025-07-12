@@ -20,7 +20,7 @@ const config: HardhatUserConfig = {
       chainId: 1337,
     },
     etherlink: {
-      url: process.env.ETHERLINK_RPC_URL || "https://testnet.etherlink.com",
+      url: process.env.ETHERLINK_RPC_URL || "https://node.ghostnet.etherlink.com",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 128123, // Etherlink testnet chain ID
     },
