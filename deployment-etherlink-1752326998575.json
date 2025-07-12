@@ -1,0 +1,14 @@
+{
+  "network": "etherlink",
+  "chainId": "128123",
+  "deployer": "0x88FE2b6BC5E636b556Ffa4e943b3c9Ec4E2CcF9F",
+  "timestamp": "2025-07-12T13:29:58.574Z",
+  "contracts": {
+    "MockUSDC": "0x8beC0937A6668FAA3a844047F1A9BaE0dCe0c759",
+    "TrustBankCore": "0x93AdBDd7c4af41ADe02dDF64c19660185B716467",
+    "YieldStrategy": "0x3Bd6A15837D15cd87cA0db6dEBE4Dd3A1C5428ae",
+    "LiquidityPool": "0xc6AC40b9D695bDd472d84c0170f18C545a1B29b1",
+    "CrossChainInfra": "0x384B345a9E4561cB03d19FeBA12fCECD3A7bDa92",
+    "SimpleCrossChainYield": "0x0C319b5d3e894A60607c113bE97e482129De52AF"
+  }
+}

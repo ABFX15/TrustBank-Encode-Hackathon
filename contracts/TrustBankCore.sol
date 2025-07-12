@@ -88,8 +88,6 @@ contract TrustBankCore is Ownable {
         uint256 amount,
         string memory message
     ) external {
-        uint256 balance = stablecoin.balanceOf(msg.sender);
-        if (balance < amount) revert TrustBankCore__InsufficientBalance();
 
         nextPaymentId++;
         paymentCount[msg.sender]++; 
@@ -105,6 +103,8 @@ contract TrustBankCore is Ownable {
         payments[nextPaymentId].completed = true;
 
         trustScores[msg.sender] = _calculateTrustScore(msg.sender);
+        uint256 balance = stablecoin.balanceOf(msg.sender);
+        if (balance < amount) revert TrustBankCore__InsufficientBalance();
 
         stablecoin.safeTransferFrom(msg.sender, to, amount);
 

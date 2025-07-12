@@ -5,6 +5,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./TrustBankCrossChainInfrastructure_Simplified.sol";
 
 /**
  * @title YieldStrategy
@@ -42,6 +43,10 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
     uint256 public totalYieldEarned;
     uint256 public nextStrategyId;
     uint256 public totalAllocation; // Total allocation across all strategies
+
+    // Cross-chain state variables
+    TrustBankCrossChainInfrastructure_Simplified public crossChainInfra;
+    bool public crossChainEnabled;
 
     // Constants
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
@@ -129,8 +134,34 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
         userLastUpdate[msg.sender] = block.timestamp;
         totalDeposits += amount;
 
+        // Transfer tokens from user
         stablecoin.safeTransferFrom(msg.sender, address(this), amount);
 
+        _allocateToStrategies(amount);
+
+        emit Deposited(msg.sender, amount);
+    }
+
+    /**
+     * @dev Deposit stablecoin that has already been transferred to this contract
+     * @param amount Amount to deposit
+     * @dev Only for use by integrated contracts like LiquidityPool
+     */
+    function depositPreTransferred(uint256 amount) external nonReentrant {
+        if (amount == 0) {
+            revert YieldStrategy__InsufficientAmount();
+        }
+        if (totalAllocation == 0) {
+            revert YieldStrategy__NoStrategiesAvailable();
+        }
+
+        uint256 currentBalance = _getUserBalanceWithYield(msg.sender);
+
+        userDeposits[msg.sender] = currentBalance + amount;
+        userLastUpdate[msg.sender] = block.timestamp;
+        totalDeposits += amount;
+
+        // Tokens should already be transferred by caller
         _allocateToStrategies(amount);
 
         emit Deposited(msg.sender, amount);
@@ -189,13 +220,11 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
      * @dev Rebalance allocations across strategies
      */
     function rebalance() external nonReentrant onlyOwner {
-        // Effects first - harvest yield internally
         _internalHarvestYield();
 
-        // Interactions - get balance (this is safe as it's a view call)
+        // aderyn-ignore-next-line(reentrancy-state-change)
         uint256 contractBalance = stablecoin.balanceOf(address(this));
 
-        // Effects - update strategy allocations
         for (uint256 i = 0; i < nextStrategyId; i++) {
             Strategy storage strategy = strategies[i];
             if (strategy.active) {
@@ -258,6 +287,50 @@ contract YieldStrategy is Ownable, ReentrancyGuard {
         }
 
         emit EmergencyWithdrawal(totalBalance);
+    }
+
+    /**
+     * @dev Enable cross-chain functionality
+     * @param _crossChainInfra Address of simplified cross-chain infrastructure
+     */
+    function enableCrossChain(address _crossChainInfra) external onlyOwner {
+        crossChainInfra = TrustBankCrossChainInfrastructure_Simplified(
+            payable(_crossChainInfra)
+        );
+        crossChainEnabled = _crossChainInfra != address(0);
+    }
+
+    /**
+     * @dev Deploy funds to yield opportunities on other chains
+     * @param chainId Target chain ID
+     * @param amount Amount to deploy
+     */
+    function deployCrossChain(
+        uint256 chainId,
+        uint256 amount
+    ) external payable onlyOwner nonReentrant {
+        if (!crossChainEnabled) {
+            revert YieldStrategy__StrategyNotActive();
+        }
+        if (amount > stablecoin.balanceOf(address(this))) {
+            revert YieldStrategy__InsufficientBalance();
+        }
+
+        // Approve and send cross-chain
+        stablecoin.approve(address(crossChainInfra), amount);
+        crossChainInfra.sendCrossChain{value: msg.value}(
+            chainId,
+            address(this),
+            amount,
+            abi.encode("YIELD_DEPLOY")
+        );
+    }
+
+    /**
+     * @dev Get cross-chain deployments (simplified)
+     */
+    function getTotalCrossChainDeployments() external view returns (uint256) {
+        return crossChainEnabled ? crossChainInfra.totalBridgedVolume() : 0;
     }
 
     /**

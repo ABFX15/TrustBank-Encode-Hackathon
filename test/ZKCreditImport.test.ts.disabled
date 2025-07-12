@@ -2,16 +2,16 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import {
-    VouchPayCore,
-    CreditEngine,
-    ZKCreditImport,
+    TrustBankCore,
+    TrustBankCreditEngine,
+    ZKCreditImportProduction,
     MockUSDC
 } from "../typechain-types";
 
 describe("ZKCreditImport", function () {
-    let vouchPayCore: VouchPayCore;
-    let creditEngine: CreditEngine;
-    let zkCreditImport: ZKCreditImport;
+    let vouchPayCore: TrustBankCore;
+    let creditEngine: TrustBankCreditEngine;
+    let zkCreditImport: ZKCreditImportProduction;
     let mockUSDC: MockUSDC;
     let owner: Signer;
     let user1: Signer;
@@ -27,17 +27,17 @@ describe("ZKCreditImport", function () {
         const MockUSDC = await ethers.getContractFactory("MockUSDC");
         mockUSDC = await MockUSDC.deploy();
 
-        // Deploy VouchPayCore
-        const VouchPayCore = await ethers.getContractFactory("VouchPayCore");
-        vouchPayCore = await VouchPayCore.deploy(mockUSDC.target);
+        // Deploy TrustBankCore
+        const TrustBankCore = await ethers.getContractFactory("TrustBankCore");
+        vouchPayCore = await TrustBankCore.deploy(mockUSDC.target);
 
-        // Deploy CreditEngine
-        const CreditEngine = await ethers.getContractFactory("CreditEngine");
-        creditEngine = await CreditEngine.deploy(vouchPayCore.target, mockUSDC.target);
+        // Deploy TrustBankCreditEngine
+        const TrustBankCreditEngine = await ethers.getContractFactory("TrustBankCreditEngine");
+        creditEngine = await TrustBankCreditEngine.deploy(vouchPayCore.target, mockUSDC.target);
 
-        // Deploy ZKCreditImport
-        const ZKCreditImport = await ethers.getContractFactory("ZKCreditImport");
-        zkCreditImport = await ZKCreditImport.deploy(
+        // Deploy ZKCreditImportProduction
+        const ZKCreditImportProduction = await ethers.getContractFactory("ZKCreditImportProduction");
+        zkCreditImport = await ZKCreditImportProduction.deploy(
             vouchPayCore.target,
             creditEngine.target,
             zkVerificationKey

@@ -1,18 +1,19 @@
 pragma circom 2.0.0;
 
 /**
- * Lending History Verification Circuit
+ * TrustBank Lending History Verification Circuit
  * 
  * Proves that a user has successfully completed at least `threshold` number of loans
  * without revealing specific loan details or amounts.
  * 
  * Uses nullifiers to prevent double-counting of the same loan across proofs.
+ * Integrates with TrustBank protocol for enhanced credit scoring.
  */
 
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/poseidon.circom";
 
-template LendingHistoryVerification(maxLoans) {
+template TrustBankLendingHistoryVerification(maxLoans) {
     // Private inputs
     signal private input loanIds[maxLoans];           // Unique loan identifiers
     signal private input repaymentProofs[maxLoans];   // Proofs of successful repayment
@@ -83,5 +84,5 @@ template Sum(n) {
     }
 }
 
-// Main component with support for up to 50 loans
-component main = LendingHistoryVerification(50);
+// Main component with support for up to 50 loans (configurable for TrustBank scale)
+component main = TrustBankLendingHistoryVerification(50);

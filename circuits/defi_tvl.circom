@@ -1,18 +1,19 @@
 pragma circom 2.0.0;
 
 /**
- * DeFi TVL Verification Circuit
+ * TrustBank DeFi TVL Verification Circuit
  * 
  * Proves that a user has at least `threshold` amount of TVL across DeFi protocols
  * without revealing the exact TVL amounts or which protocols they use.
  * 
- * This circuit ensures privacy while enabling reputation-based lending.
+ * This circuit ensures privacy while enabling reputation-based lending in TrustBank.
+ * Integrates with TrustBankZKCredit contract for trust score enhancement.
  */
 
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/gates.circom";
 
-template DeFiTVLVerification(maxProtocols) {
+template TrustBankDeFiTVLVerification(maxProtocols) {
     // Private inputs - user's actual data
     signal private input protocolBalances[maxProtocols]; // Balances across different protocols
     signal private input protocolMask[maxProtocols];     // 1 if protocol is used, 0 otherwise
@@ -75,5 +76,5 @@ template Sum(n) {
     }
 }
 
-// Main component with support for up to 10 protocols
-component main = DeFiTVLVerification(10);
+// Main component with support for up to 10 protocols (configurable for TrustBank)
+component main = TrustBankDeFiTVLVerification(10);

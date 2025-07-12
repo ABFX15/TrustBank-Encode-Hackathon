@@ -108,30 +108,31 @@ contract LiquidityPool is ERC20, Ownable {
             revert LiquidityPool__MinimumDepositNotMet();
         }
 
+        // Calculate shares BEFORE updating state
+        uint256 shares;
+        if (totalSupply() == 0) {
+            // First deposit, 1:1 ratio
+            shares = amount;
+        } else {
+            // shares = amount * totalSupply / current pool value (before this deposit)
+            shares = (amount * totalSupply()) / stats.totalDeposits;
+        }
+
         stats.totalDeposits += amount;
         stats.availableLiquidity += amount;
 
         userDeposits[msg.sender] += amount;
         lastDepositTime[msg.sender] = block.timestamp;
 
-        uint256 shares;
-        if (totalSupply() == 0) {
-            // First deposit, 1:1 ratio
-            shares = amount;
-        } else {
-            // shares = amount * totalSupply / current pool value
-            shares = (amount * totalSupply()) / stats.totalDeposits;
-        }
+        stablecoin.safeTransferFrom(msg.sender, address(this), amount);
 
         _mint(msg.sender, shares);
 
-        // Deploy funds to yield strategy (if available)
         if (address(yieldStrategy) != address(0)) {
             stablecoin.safeTransfer(address(yieldStrategy), amount);
-            yieldStrategy.deposit(amount);
+            yieldStrategy.depositPreTransferred(amount);
         }
 
-        stablecoin.safeTransferFrom(msg.sender, address(this), amount);
         emit LiquidityAdded(msg.sender, amount, shares);
     }
 
@@ -217,7 +218,7 @@ contract LiquidityPool is ERC20, Ownable {
 
         if (address(yieldStrategy) != address(0) && interest > 0) {
             stablecoin.safeTransfer(address(yieldStrategy), interest);
-            yieldStrategy.deposit(interest);
+            yieldStrategy.depositPreTransferred(interest);
         }
 
         emit LoanRepaid(borrower, principal, interest);

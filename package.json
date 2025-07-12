@@ -8,8 +8,9 @@
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test",
     "node": "hardhat node",
-    "deploy:local": "hardhat ignition deploy ./ignition/modules/VouchPay.ts --network localhost",
-    "deploy:etherlink": "hardhat ignition deploy ./ignition/modules/VouchPay.ts --network etherlink",
+    "deploy:local": "hardhat ignition deploy ./ignition/modules/TrustBank.ts --network localhost",
+    "deploy:etherlink": "hardhat run scripts/deploy-etherlink.ts --network etherlink",
+    "deploy:etherlink:ignition": "hardhat ignition deploy ./ignition/modules/TrustBank.ts --network etherlink",
     "verify": "hardhat verify --network etherlink",
     "coverage": "hardhat coverage",
     "lint": "solhint 'contracts/**/*.sol'",
@@ -27,7 +28,10 @@
   },
   "dependencies": {
     "@account-abstraction/contracts": "^0.8.0",
+    "@axelar-network/axelar-gmp-sdk-solidity": "^6.0.6",
     "@chainlink/contracts": "^1.4.0",
+    "@chainlink/contracts-ccip": "^1.6.0",
+    "@layerzerolabs/solidity-examples": "^1.1.0",
     "@openzeppelin/contracts": "^5.3.0",
     "@openzeppelin/contracts-upgradeable": "^5.3.0",
     "dotenv": "^17.2.0"
