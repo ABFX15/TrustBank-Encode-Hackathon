@@ -1,0 +1,31 @@
+{
+  "name": "trustbank-zk-circuits",
+  "version": "1.0.0",
+  "description": "Zero-knowledge circuits for TrustBank crypto reputation verification",
+  "scripts": {
+    "build": "npm run build:defi-tvl && npm run build:lending && npm run build:wallet-age",
+    "build:defi-tvl": "circom defi_tvl.circom --r1cs --wasm --sym -o build/defi_tvl/",
+    "build:lending": "circom lending_history.circom --r1cs --wasm --sym -o build/lending_history/",
+    "build:wallet-age": "circom wallet_age.circom --r1cs --wasm --sym -o build/wallet_age/",
+    "setup": "npm run setup:defi-tvl && npm run setup:lending && npm run setup:wallet-age",
+    "setup:defi-tvl": "npm run setup-circuit -- defi_tvl",
+    "setup:lending": "npm run setup-circuit -- lending_history",
+    "setup:wallet-age": "npm run setup-circuit -- wallet_age",
+    "setup-circuit": "node scripts/setup-circuit.js",
+    "generate-verifiers": "npm run gen-verifier:defi-tvl && npm run gen-verifier:lending && npm run gen-verifier:wallet-age",
+    "gen-verifier:defi-tvl": "snarkjs zkey export solidityverifier build/defi_tvl/circuit_final.zkey ../contracts/verifiers/DeFiTVLVerifier.sol",
+    "gen-verifier:lending": "snarkjs zkey export solidityverifier build/lending_history/circuit_final.zkey ../contracts/verifiers/LendingHistoryVerifier.sol",
+    "gen-verifier:wallet-age": "snarkjs zkey export solidityverifier build/wallet_age/circuit_final.zkey ../contracts/verifiers/WalletAgeVerifier.sol",
+    "test": "npm run test:defi-tvl && npm run test:lending && npm run test:wallet-age",
+    "test:defi-tvl": "node test/test_defi_tvl.js",
+    "test:lending": "node test/test_lending_history.js",
+    "test:wallet-age": "node test/test_wallet_age.js"
+  },
+  "devDependencies": {
+    "circom_tester": "^0.0.19",
+    "snarkjs": "^0.7.0"
+  },
+  "dependencies": {
+    "circomlib": "^2.0.5"
+  }
+}
