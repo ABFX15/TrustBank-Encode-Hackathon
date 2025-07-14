@@ -32,13 +32,29 @@ export function DashboardPage() {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-futura">
-              Experience the future of decentralized finance with our
+              TrustBank is a next-generation DeFi protocol powered by Chainlink
+              CCIP for seamless cross-chain operations.{" "}
+              <br className="hidden md:inline" />
               <span className="text-cyan-400 font-medium font-tech">
-                {" "}
-                revolutionary trust network
+                Lend, borrow, and earn
+              </span>{" "}
+              across multiple blockchains with a unique trust-based credit
+              network.
+              <br className="hidden md:inline" />
+              <span className="text-cyan-400 font-medium font-tech">
+                No collateral required
+              </span>{" "}
+              when you build your on-chain reputation and trust score.
+              <br className="hidden md:inline" />
+              <span className="text-cyan-400 font-medium font-tech">
+                Aggregate yields
+              </span>{" "}
+              from top DeFi strategies, track your real returns, and move assets
+              securely between chains.
+              <br className="hidden md:inline" />
+              <span className="text-cyan-400 font-medium font-tech">
+                Your reputation, your network, your DeFi bank.
               </span>
-              . Borrow without collateral, earn premium yields, and build your
-              reputation on-chain.
             </p>
           </div>
 

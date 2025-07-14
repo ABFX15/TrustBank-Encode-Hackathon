@@ -1,4 +1,4 @@
-import { AnalyticsTab } from "@/components/TabbedInterface";
+import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
 import { DynamicHeader } from "@/components/DynamicComponents";
 
 export default function AnalyticsPage() {
@@ -6,7 +6,7 @@ export default function AnalyticsPage() {
     <>
       <DynamicHeader />
       <main className="container mx-auto px-4 py-8">
-        <AnalyticsTab />
+        <AdvancedAnalyticsDashboard />
       </main>
     </>
   );

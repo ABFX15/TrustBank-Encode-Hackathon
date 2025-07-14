@@ -1,4 +1,4 @@
-import { BorrowingTab } from "@/components/TabbedInterface";
+import { LendingInterface } from "@/components/LendingInterface";
 import { DynamicHeader } from "@/components/DynamicComponents";
 
 export default function BorrowingPage() {
@@ -6,7 +6,7 @@ export default function BorrowingPage() {
     <>
       <DynamicHeader />
       <main className="container mx-auto px-4 py-8">
-        <BorrowingTab />
+        <LendingInterface />
       </main>
     </>
   );

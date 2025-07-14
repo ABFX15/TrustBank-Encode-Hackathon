@@ -1,4 +1,4 @@
-import { TrustNetworkTab } from "@/components/TabbedInterface";
+import { TrustNetwork } from "@/components/TrustNetwork";
 import { DynamicHeader } from "@/components/DynamicComponents";
 
 export default function TrustPage() {
@@ -6,7 +6,7 @@ export default function TrustPage() {
     <>
       <DynamicHeader />
       <main className="container mx-auto px-4 py-8">
-        <TrustNetworkTab />
+        <TrustNetwork />
       </main>
     </>
   );

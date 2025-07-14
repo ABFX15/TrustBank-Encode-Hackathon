@@ -1,0 +1,157 @@
+type User @entity {
+  id: ID! # User address
+  trustScore: BigInt!
+  totalPayments: BigInt!
+  totalVouches: BigInt!
+  creditBoosts: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+
+  # Relationships
+  payments: [Payment!]! @derivedFrom(field: "from")
+  receivedPayments: [Payment!]! @derivedFrom(field: "to")
+  vouches: [Vouch!]! @derivedFrom(field: "voucher")
+  receivedVouches: [Vouch!]! @derivedFrom(field: "vouchee")
+  loans: [Loan!]! @derivedFrom(field: "borrower")
+  zkVerifications: [ZKVerification!]! @derivedFrom(field: "user")
+}
+
+type Payment @entity {
+  id: ID! # Transaction hash + log index
+  from: User!
+  to: User!
+  amount: BigInt!
+  message: String!
+  timestamp: BigInt!
+  completed: Boolean!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Vouch @entity {
+  id: ID! # Transaction hash + log index
+  voucher: User!
+  vouchee: User!
+  amount: BigInt!
+  timestamp: BigInt!
+  active: Boolean!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Loan @entity {
+  id: ID! # Loan ID from contract
+  borrower: User!
+  amount: BigInt!
+  interestRate: BigInt!
+  dueDate: BigInt!
+  repaid: Boolean!
+  defaulted: Boolean!
+  createdAt: BigInt!
+  repaidAt: BigInt
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type ZKVerification @entity {
+  id: ID! # Transaction hash + log index
+  user: User!
+  metric: String! # "DEFI_TVL", "LENDING_HISTORY", "WALLET_AGE"
+  threshold: BigInt!
+  trustBoost: BigInt!
+  verifiedAt: BigInt!
+  active: Boolean!
+  commitment: Bytes!
+  ipfsProof: String!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type LiquidityProvider @entity {
+  id: ID! # User address
+  user: User!
+  totalDeposited: BigInt!
+  totalWithdrawn: BigInt!
+  currentBalance: BigInt!
+  yieldEarned: BigInt!
+  lastDeposit: BigInt!
+  lastWithdraw: BigInt!
+}
+
+type YieldStrategy @entity {
+  id: ID! # Strategy ID
+  name: String!
+  protocol: String!
+  allocation: BigInt!
+  currentDeposit: BigInt!
+  currentAPY: BigInt!
+  totalYieldGenerated: BigInt!
+  lastHarvest: BigInt!
+  active: Boolean!
+}
+
+type ProtocolStats @entity {
+  id: ID! # Always "1"
+  totalUsers: BigInt!
+  totalPayments: BigInt!
+  totalVouches: BigInt!
+  totalLoans: BigInt!
+  totalTVL: BigInt!
+  totalYieldGenerated: BigInt!
+  averageTrustScore: BigInt!
+  activeLoans: BigInt!
+  defaultedLoans: BigInt!
+  lastUpdated: BigInt!
+}
+
+type TrustScoreHistory @entity {
+  id: ID! # User address + timestamp
+  user: User!
+  trustScore: BigInt!
+  timestamp: BigInt!
+  event: String! # "PAYMENT", "VOUCH", "LOAN_REPAY", "ZK_BOOST"
+  blockNumber: BigInt!
+}
+
+type DailyStats @entity {
+  id: ID! # Date (YYYY-MM-DD)
+  date: String!
+  newUsers: BigInt!
+  totalPayments: BigInt!
+  totalVouches: BigInt!
+  totalLoans: BigInt!
+  totalVolume: BigInt!
+  averageTrustScore: BigInt!
+}
+
+# Events for real-time subscriptions
+type PaymentEvent @entity {
+  id: ID!
+  payment: Payment!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+type VouchEvent @entity {
+  id: ID!
+  vouch: Vouch!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+type LoanEvent @entity {
+  id: ID!
+  loan: Loan!
+  eventType: String! # "REQUESTED", "APPROVED", "REPAID", "DEFAULTED"
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+type TrustScoreUpdate @entity {
+  id: ID!
+  user: User!
+  oldScore: BigInt!
+  newScore: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}

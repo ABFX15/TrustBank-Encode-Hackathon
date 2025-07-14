@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    experimental: {
+        esmExternals: 'loose'
+    },
     webpack: (config, { isServer }) => {
         config.resolve.fallback = { fs: false, net: false, tls: false };
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
@@ -14,6 +17,15 @@ const nextConfig = {
         config.module.rules.push({
             test: /HeartbeatWorker\.js$/,
             use: 'null-loader'
+        });
+
+        // Handle ES module compatibility issues
+        config.module.rules.push({
+            test: /\.m?js$/,
+            type: 'javascript/auto',
+            resolve: {
+                fullySpecified: false,
+            },
         });
 
         return config;

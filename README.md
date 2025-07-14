@@ -64,14 +64,199 @@ TrustBank creates the first complete decentralized banking experience with trust
 - **Low Cost**: 0.5% fee vs 5-15% traditional remittances
 - **Local Cash-Out**: Partner network converts to local currency
 
+## 🔄 How TrustBank Works
+
+### Complete System Workflow
+
+```mermaid
+graph TB
+    subgraph "User Journey"
+        A[Connect Wallet] --> B[Deposit USDC]
+        B --> C[Send Payments]
+        C --> D[Get Vouched by Friends]
+        D --> E[Build Trust Score]
+        E --> F[Request Loan]
+        F --> G[Auto-Earn Yield]
+    end
+
+    subgraph "Smart Contract Architecture"
+        TC[TrustBankCore<br/>Payments & Vouching]
+        CE[CreditEngine<br/>Trust-based Loans]
+        LP[LiquidityPool<br/>Capital Management]
+        YS[YieldStrategy<br/>Auto-Compound DeFi]
+        ZK[ZKCredit<br/>Privacy Reputation]
+        CCIP[CrossChain<br/>Global Remittances]
+    end
+
+    subgraph "Trust Score Calculation"
+        PH[Payment History<br/>40%] --> TS[Trust Score]
+        VW[Vouch Weight<br/>30%] --> TS
+        LR[Loan Repayment<br/>25%] --> TS
+        AA[Account Age<br/>5%] --> TS
+        ZB[ZK Crypto Boost] --> TS
+    end
+
+    subgraph "Yield Generation"
+        UD[User Deposits] --> LP
+        LP --> YS
+        YS --> AAVE[Aave Protocol]
+        YS --> COMP[Compound Protocol]
+        YS --> UNI[Uniswap V3 Pools]
+        AAVE --> YLD[5-8% APY]
+        COMP --> YLD
+        UNI --> YLD
+    end
+
+    %% User Flow Connections
+    C --> TC
+    D --> TC
+    TC --> TS
+    TS --> CE
+    CE --> LP
+    B --> YS
+
+    %% Contract Interactions
+    TC -.-> CE
+    CE -.-> LP
+    LP -.-> YS
+    ZK -.-> TC
+    CCIP -.-> TC
+
+    %% Styling
+    classDef userFlow fill:#00d4ff,stroke:#0066cc,color:#000
+    classDef contracts fill:#00ff88,stroke:#00cc44,color:#000
+    classDef calculation fill:#ff6b6b,stroke:#cc0000,color:#000
+    classDef yield fill:#ffd93d,stroke:#cc8800,color:#000
+
+    class A,B,C,D,E,F,G userFlow
+    class TC,CE,LP,YS,ZK,CCIP contracts
+    class PH,VW,LR,AA,ZB,TS calculation
+    class UD,AAVE,COMP,UNI,YLD yield
+```
+
+### 🎯 Step-by-Step User Experience
+
+#### 1. **Onboard & Start Banking**
+
+- Connect wallet → Get welcome bonus → Deposit USDC via card/bank/crypto
+- **Instant access** to banking features without KYC delays
+
+#### 2. **Build Social Trust Network**
+
+- Send payments to friends with messages ("Coffee money!", "Rent split")
+- Friends vouch for you → **Trust score increases exponentially**
+- Each successful payment builds reputation automatically
+
+#### 3. **Unlock Credit Through Reputation**
+
+- **Trust Score Formula**: `(Payments×40%) + (Vouches×30%) + (Repayment×25%) + (Age×5%)`
+- **Max Loan**: `Trust Score × $10` (capped at $1,000)
+- **No collateral required** - social reputation is your collateral
+
+#### 4. **Enhance with ZK Crypto Reputation**
+
+- Prove DeFi expertise without revealing sensitive data
+- **TVL Proof**: "I have >$50k in DeFi" → +200 trust boost
+- **Lending History**: "I've repaid 20+ loans" → +150 trust boost
+- **Wallet Age**: "Active for 2+ years" → +100 trust boost
+
+#### 5. **Auto-Earn While You Bank**
+
+- All deposits automatically earn **5-8% APY** across blue-chip DeFi
+- Smart allocation across Aave, Compound, Uniswap V3
+- **One-click compound** - set and forget yield optimization
+
+#### 6. **Scale Globally with Cross-Chain**
+
+- Send remittances instantly via Chainlink CCIP
+- **$100 to Philippines**: 15 minutes, 0.5% fee (vs 5-15% traditional)
+- Trust score portable across all supported chains
+
+## 📊 Real-Time Trust Analytics (Goldsky Integration)
+
+TrustBank leverages **Goldsky's real-time data platform** to provide instant trust network insights:
+
+### 🔍 **Trust Network Subgraph**
+
+```graphql
+# Query user's complete trust network
+query GetUserTrustNetwork($user: String!) {
+  user(id: $user) {
+    trustScore
+    payments(orderBy: timestamp, orderDirection: desc) {
+      amount
+      recipient
+      message
+      timestamp
+    }
+    vouches(where: { active: true }) {
+      voucher {
+        id
+        trustScore
+      }
+      amount
+      timestamp
+    }
+    loans {
+      amount
+      status
+      repaidAt
+    }
+  }
+}
+```
+
+### 📈 **Real-Time Features**
+
+- **Live Trust Score Updates**: Instant recalculation as payments/vouches happen
+- **Network Effect Visualization**: See how vouching relationships spread virally
+- **Risk Analytics**: Real-time loan default predictions based on network health
+- **Cross-Chain Trust Aggregation**: Unified view across all supported chains
+
+### 🚀 **Implementation**
+
+```typescript
+// Real-time trust score subscription
+const { data: trustScore } = useGoldskySubscription({
+  query: TRUST_SCORE_SUBSCRIPTION,
+  variables: { user: address },
+});
+
+// Live network visualization
+const trustNetwork = useGoldskySubgraph({
+  query: TRUST_NETWORK_QUERY,
+  pollInterval: 1000, // Real-time updates
+});
+```
+
 ## 🏗️ Technical Architecture
 
-Built on **Etherlink L2** for optimal stablecoin banking:
+Built on **Etherlink L2** with **Sequence Smart Wallets** for optimal banking UX:
 
-- ✅ **Ultra-low fees** → $0.01 transaction costs for micropayments
+- ✅ **Gasless Transactions** → Sequence account abstraction eliminates gas fees
+- ✅ **Email/Social Login** → No seed phrases required for mainstream adoption
 - ✅ **Fast finality** → Real-time payment confirmations
 - ✅ **EVM-compatible** → Works with all DeFi yield protocols
 - ✅ **Stablecoin native** → Optimized for USDC/USDT operations
+
+### 🎮 **Sequence Integration Benefits**
+
+```typescript
+// Seamless onboarding with Sequence
+const sequenceWallet = new SequenceWallet({
+  network: "etherlink",
+  projectAccessKey: process.env.SEQUENCE_PROJECT_KEY,
+});
+
+// Gasless payments - users never see gas fees
+await sequenceWallet.sendTransaction({
+  to: recipient,
+  value: amount,
+  gasless: true, // Sponsored by TrustBank
+});
+```
+
+**Result**: True "Venmo experience" → Users send money with just email/username, no crypto complexity
 
 ### Core Smart Contracts
 
@@ -145,13 +330,57 @@ function getUserCryptoBoost(address user) external view returns (uint256);
 function getEnhancedLoanTerms(address user) external view returns (uint256 maxAmount, uint256 interestRate);
 ```
 
-#### 7. `TrustBankMortgage.sol`
+#### 7. `TrustBankPriceOracle.sol` (RedStone Integration)
+
+```solidity
+// Decentralized asset pricing for multi-chain DeFi operations
+function getAssetPrice(string memory asset) external view returns (uint256);
+function getYieldAPY(string memory protocol) external view returns (uint256);
+function getCollateralValue(address token, uint256 amount) external view returns (uint256 usdValue);
+```
+
+**🔮 RedStone Oracle Benefits (Decentralized Only):**
+
+- **Real-Time Asset Pricing**: Accurate cross-chain asset valuation for yield strategies
+- **DeFi Yield Optimization**: Live APY data for auto-compound strategies
+- **Multi-Chain Support**: Price feeds across all supported networks
+- **Decentralized Risk Management**: On-chain price-based risk assessment
+
+```typescript
+// Decentralized asset pricing for yield optimization
+const usdcPrice = await redStoneOracle.getPrice("USDC");
+const aaveAPY = await redStoneOracle.getYieldAPY("AAVE_USDC");
+const compoundAPY = await redStoneOracle.getYieldAPY("COMPOUND_USDC");
+
+// Auto-allocate to highest yield
+const bestStrategy = aaveAPY > compoundAPY ? "aave" : "compound";
+```
+
+#### 8. `TrustBankMortgage.sol`
 
 ```solidity
 // Decentralized mortgage and real estate lending
 function createMortgageApplication(uint256 propertyValue, uint256 loanAmount) external;
 function approveMortgage(uint256 applicationId) external;
 function makePayment(uint256 mortgageId, uint256 amount) external;
+```
+
+**🚀 Sponsor Technology Integration**
+
+**Goldsky + Sequence + RedStone = Complete Decentralized Banking Infrastructure:**
+
+- **🔍 Goldsky**: Real-time trust network indexing & analytics → Instant decentralized credit decisions
+- **🎮 Sequence**: Gasless smart wallets & social login → True Venmo UX for Web3
+- **🔮 RedStone**: DeFi yield optimization & asset pricing → Maximum decentralized returns
+
+```typescript
+// Complete decentralized integration example
+const user = await sequenceWallet.authenticate("email"); // Sequence gasless login
+const trustData = await goldsky.getUserTrustNetwork(user.address); // Real-time trust analytics
+const bestYield = await redStone.getOptimalYieldStrategy(); // DeFi yield optimization
+
+// Result: Instant decentralized loan approval with perfect UX
+const loan = await trustBank.requestLoan(amount, { gasless: true });
 ```
 
 **Key Innovation: Decentralized Crypto Reputation System**
@@ -198,14 +427,14 @@ Max Loan Amount = Trust Score × $10 (capped at $1,000)
 
 **Perfect 5-minute hackathon demo:**
 
-### 🎬 Consumer Flow (B2C)
+### 🎬 Consumer Flow (B2C) - Enhanced with Sponsor Tech
 
-1. **Onboard** → User connects wallet → Gets welcome bonus of 10 USDC
-2. **Send Payment** → Send $25 USDC to friend with message "Coffee money!"
-3. **Get Vouched** → Friend vouches for user → Trust score increases
-4. **Earn Yield** → Deposit $100 USDC → Automatically earning 5.5% APY
-5. **Get Loan** → Request $50 loan with 0% collateral → Approved in 30 seconds
-6. **Repay** → Repay loan → Trust score increases further
+1. **Seamless Onboard** → Login with email (**Sequence**) → No seed phrases, gasless setup
+2. **Smart Payment** → Send $25 to friend (**Sequence gasless**) → Real-time trust update (**Goldsky**)
+3. **Intelligent Vouching** → Friend vouches → **Goldsky** analytics predict credit boost instantly
+4. **Auto-Yield** → Deposit $100 → **RedStone** finds best DeFi yields (6.2% APY vs 5.5% static)
+5. **Instant Credit** → Pure decentralized scoring (**Goldsky trust analytics**) → $200 loan approved in 10 seconds
+6. **Gasless Repay** → Repay via **Sequence** → **Goldsky** live trust score update
 
 ### 🏦 Banking Flow (B2B)
 
@@ -326,9 +555,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Etherlink Team** - For building the perfect L2 for decentralized innovation
+- **Etherlink Team** - For building the perfect L2 for decentralized banking innovation
+- **Goldsky** - For real-time blockchain data infrastructure powering trust analytics
+- **Sequence** - For account abstraction that enables true mainstream UX
+- **RedStone** - For reliable oracle infrastructure bridging TradFi and DeFi
 - **ERC-4337 Community** - For making account abstraction reality
 - **OpenZeppelin** - For battle-tested smart contract primitives
-- **The Graph** - For decentralized indexing of trust relationships
 
 ---
