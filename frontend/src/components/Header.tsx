@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+// Reown AppKit provides the button component automatically
 
 export function Header() {
   return (
@@ -60,7 +60,7 @@ export function Header() {
 
           {/* Connect Button */}
           <div className="flex items-center">
-            <ConnectButton />
+            <appkit-button />
           </div>
         </div>
       </div>

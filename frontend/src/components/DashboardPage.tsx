@@ -21,41 +21,48 @@ export function DashboardPage() {
 
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
-          {/* Welcome Banner */}
-          <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 font-cyber">
+          {/* Compact Hero Section - Post-Welcome */}
+          <div className="text-center mb-12 py-12 relative">
+            {/* Compact Title */}
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="gradient-text">TrustBank</span>
-              <br />
-              <span className="text-3xl md:text-4xl text-cyan-300/80 font-tech font-medium">
-                Decentralized Banking
+              <span className="text-2xl md:text-3xl text-cyan-300/80 font-medium block">
+                Dashboard
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-futura">
-              TrustBank is a next-generation DeFi protocol powered by Chainlink
-              CCIP for seamless cross-chain operations.{" "}
-              <br className="hidden md:inline" />
-              <span className="text-cyan-400 font-medium font-tech">
-                Lend, borrow, and earn
-              </span>{" "}
-              across multiple blockchains with a unique trust-based credit
-              network.
-              <br className="hidden md:inline" />
-              <span className="text-cyan-400 font-medium font-tech">
-                No collateral required
-              </span>{" "}
-              when you build your on-chain reputation and trust score.
-              <br className="hidden md:inline" />
-              <span className="text-cyan-400 font-medium font-tech">
-                Aggregate yields
-              </span>{" "}
-              from top DeFi strategies, track your real returns, and move assets
-              securely between chains.
-              <br className="hidden md:inline" />
-              <span className="text-cyan-400 font-medium font-tech">
-                Your reputation, your network, your DeFi bank.
-              </span>
+            <p className="text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
+              Build your trust network, earn credit, and access uncollateralized
+              loans up to $50,000
             </p>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              <div className="bg-dark-800/50 rounded-xl p-4 border border-emerald-500/20">
+                <div className="text-2xl font-bold text-emerald-400 mb-1">
+                  $2.4M+
+                </div>
+                <div className="text-xs text-gray-400">Uncollateralized</div>
+              </div>
+              <div className="bg-dark-800/50 rounded-xl p-4 border border-cyan-500/20">
+                <div className="text-2xl font-bold text-cyan-400 mb-1">
+                  5,200+
+                </div>
+                <div className="text-xs text-gray-400">Trust Connections</div>
+              </div>
+              <div className="bg-dark-800/50 rounded-xl p-4 border border-purple-500/20">
+                <div className="text-2xl font-bold text-purple-400 mb-1">
+                  98.7%
+                </div>
+                <div className="text-xs text-gray-400">Repayment Rate</div>
+              </div>
+              <div className="bg-dark-800/50 rounded-xl p-4 border border-yellow-500/20">
+                <div className="text-2xl font-bold text-yellow-400 mb-1">
+                  850
+                </div>
+                <div className="text-xs text-gray-400">Avg Trust Score</div>
+              </div>
+            </div>
           </div>
 
           {/* Stats Overview */}
@@ -65,7 +72,7 @@ export function DashboardPage() {
 
           {/* Tabbed Interface */}
           <div className="max-w-6xl mx-auto">
-            <TabbedInterface tabs={defaultTabs} defaultTab="lending" />
+            <TabbedInterface tabs={defaultTabs} defaultTab="trust" />
           </div>
         </div>
 

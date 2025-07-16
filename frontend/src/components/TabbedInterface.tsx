@@ -17,11 +17,25 @@ interface Tab {
 
 export const defaultTabs: Tab[] = [
   {
+    id: "trust",
+    name: "Trust Network",
+    icon: "🤝",
+    component: TrustNetwork,
+    description: "Build your reputation and vouch for friends",
+  },
+  {
     id: "lending",
     name: "Banking",
     icon: "🏦",
     component: LendingInterface,
-    description: "Deposit, lend, and borrow with trust-based credit",
+    description: "Get uncollateralized loans based on your trust score",
+  },
+  {
+    id: "analytics",
+    name: "Analytics",
+    icon: "📊",
+    component: AdvancedAnalyticsDashboard,
+    description: "Track your trust score and network growth",
   },
   {
     id: "gasless",
@@ -29,20 +43,6 @@ export const defaultTabs: Tab[] = [
     icon: "🎮",
     component: GaslessPaymentInterface,
     description: "Send payments and vouch for friends without gas fees",
-  },
-  {
-    id: "analytics",
-    name: "Advanced Analytics",
-    icon: "📊",
-    component: AdvancedAnalyticsDashboard,
-    description: "Real-time trust network insights powered by Goldsky",
-  },
-  {
-    id: "trust",
-    name: "Trust Network",
-    icon: "🤝",
-    component: TrustNetwork,
-    description: "Visualize and manage your trust relationships",
   },
   {
     id: "yield",

@@ -1,6 +1,7 @@
 'use client';
 
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { createAppKit } from '@reown/appkit/react'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { http } from 'viem';
 import { mainnet, sepolia, hardhat } from 'viem/chains';
 
@@ -18,21 +19,42 @@ export const etherlinkTestnet = {
     testnet: true,
 } as const;
 
-export const config = getDefaultConfig({
-    appName: 'TrustBank',
-    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
-    chains: [
-        etherlinkTestnet,
-        ...(process.env.NODE_ENV === 'development' ? [hardhat, sepolia] : []),
-    ],
-    transports: process.env.NODE_ENV === 'development' ? {
-        [etherlinkTestnet.id]: http(),
-        [hardhat.id]: http(),
-        [sepolia.id]: http(),
-    } : {
-        [etherlinkTestnet.id]: http(),
-    },
-});
+// 1. Get projectId from https://cloud.reown.com
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID'
+
+// 2. Create a metadata object - optional
+const metadata = {
+    name: 'TrustBank',
+    description: 'Trust-Based DeFi Banking Protocol',
+    url: 'https://trustbank.defi', // origin must match your domain & subdomain
+    icons: ['https://trustbank.defi/icon.png']
+}
+
+// 3. Set the networks
+const networks = [
+    etherlinkTestnet,
+    ...(process.env.NODE_ENV === 'development' ? [hardhat, sepolia] : []),
+]
+
+// 4. Create Wagmi Adapter
+const wagmiAdapter = new WagmiAdapter({
+    networks,
+    projectId,
+    ssr: true
+})
+
+// 5. Create modal
+createAppKit({
+    adapters: [wagmiAdapter],
+    networks,
+    projectId,
+    metadata,
+    features: {
+        analytics: true, // Optional - defaults to your Cloud configuration
+    }
+})
+
+export const config = wagmiAdapter.wagmiConfig
 
 // Contract addresses (these will be populated after deployment)
 export const CONTRACT_ADDRESSES = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   useAccount,
   useWriteContract,
@@ -23,6 +23,9 @@ export function LendingInterface() {
   const chainId = useChainId();
   const [amount, setAmount] = useState("");
   const [borrowAmount, setBorrowAmount] = useState("");
+  const [depositStep, setDepositStep] = useState<
+    "idle" | "approving" | "depositing"
+  >("idle");
   const { notification, showNotification, hideNotification } =
     useNotification();
 
@@ -35,7 +38,7 @@ export function LendingInterface() {
     CONTRACT_ADDRESSES[chainId as keyof typeof CONTRACT_ADDRESSES];
 
   // Read user's USDC balance
-  const { data: usdcBalance } = useReadContract({
+  const { data: usdcBalance, refetch: refetchBalance } = useReadContract({
     address: contracts?.MockUSDC as `0x${string}`,
     abi: MockUSDCABI,
     functionName: "balanceOf",
@@ -44,13 +47,74 @@ export function LendingInterface() {
   });
 
   // Read user's allowance for LiquidityPool
-  const { data: allowance } = useReadContract({
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: contracts?.MockUSDC as `0x${string}`,
     abi: MockUSDCABI,
     functionName: "allowance",
     args: [address as `0x${string}`, contracts?.LiquidityPool as `0x${string}`],
     query: { enabled: !!address && !!contracts },
   });
+
+  const proceedToDeposit = useCallback(async () => {
+    if (!amount || !contracts || !address) return;
+
+    try {
+      const depositAmount = parseUnits(amount, 6);
+
+      // Add liquidity to LiquidityPool
+      writeContract({
+        address: contracts.LiquidityPool as `0x${string}`,
+        abi: LiquidityPoolABI,
+        functionName: "addLiquidity",
+        args: [depositAmount],
+      });
+      showNotification("info", "Depositing", "Adding liquidity to pool...");
+    } catch (err) {
+      console.error("Deposit error:", err);
+      showNotification(
+        "error",
+        "Deposit Failed",
+        "Failed to process deposit transaction"
+      );
+      setDepositStep("idle");
+    }
+  }, [amount, contracts, address, writeContract, showNotification]);
+
+  // Handle transaction completion and move to next step
+  useEffect(() => {
+    if (isConfirmed && hash) {
+      if (depositStep === "approving") {
+        // Approval completed, now do the actual deposit
+        setDepositStep("depositing");
+        refetchAllowance(); // Refresh allowance data
+
+        setTimeout(() => {
+          proceedToDeposit();
+        }, 1000); // Small delay to ensure allowance is updated
+      } else if (depositStep === "depositing") {
+        // Deposit completed
+        showNotification(
+          "success",
+          "Deposit Successful!",
+          `Successfully deposited ${amount} USDC`
+        );
+        setAmount("");
+        setDepositStep("idle");
+        refetchBalance(); // Refresh balance
+      }
+    }
+  }, [
+    isConfirmed,
+    hash,
+    depositStep,
+    amount,
+    showNotification,
+    refetchAllowance,
+    refetchBalance,
+    proceedToDeposit,
+  ]);
+
+  
 
   const handleDeposit = async () => {
     if (!amount || !contracts || !address) return;
@@ -60,7 +124,8 @@ export function LendingInterface() {
 
       // Check if we need to approve first
       if (!allowance || (allowance as bigint) < depositAmount) {
-        // Approve USDC spend
+        // Step 1: Approve USDC spend
+        setDepositStep("approving");
         writeContract({
           address: contracts.MockUSDC as `0x${string}`,
           abi: MockUSDCABI,
@@ -73,7 +138,8 @@ export function LendingInterface() {
           "Approving USDC spending..."
         );
       } else {
-        // Add liquidity to LiquidityPool
+        // Step 2: Add liquidity to LiquidityPool (already approved)
+        setDepositStep("depositing");
         writeContract({
           address: contracts.LiquidityPool as `0x${string}`,
           abi: LiquidityPoolABI,
@@ -89,6 +155,7 @@ export function LendingInterface() {
         "Deposit Failed",
         "Failed to process deposit transaction"
       );
+      setDepositStep("idle");
     }
   };
 
@@ -231,13 +298,19 @@ export function LendingInterface() {
 
           <button
             onClick={handleDeposit}
-            disabled={!amount || isPending}
+            disabled={!amount || isPending || depositStep !== "idle"}
             className="btn-primary w-full group-hover:shadow-cyan-lg"
           >
-            {isPending ? (
+            {isPending || depositStep !== "idle" ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-4 h-4 border-2 border-dark-900/20 border-t-dark-900 rounded-full animate-spin"></div>
-                <span>Depositing...</span>
+                <span>
+                  {depositStep === "approving"
+                    ? "Approving..."
+                    : depositStep === "depositing"
+                    ? "Depositing..."
+                    : "Processing..."}
+                </span>
               </div>
             ) : (
               "Deposit USDC"
