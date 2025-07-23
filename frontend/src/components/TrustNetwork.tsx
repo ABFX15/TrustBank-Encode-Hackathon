@@ -7,6 +7,7 @@ export function TrustNetwork() {
   const { address, isConnected } = useAccount();
   const [vouchAddress, setVouchAddress] = useState("");
   const [trustAmount, setTrustAmount] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(true);
 
   // Mock data - will be replaced with real contract data
   const trustConnections = [
@@ -59,6 +60,62 @@ export function TrustNetwork() {
 
   return (
     <div className="space-y-8">
+      {/* Onboarding Tooltip */}
+      {showOnboarding && (
+        <div className="card-premium border-2 border-cyan-500/50 bg-cyan-900/10">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-cyan-400 mb-2">
+                🎯 How Trust Scoring Works
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-300">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <span className="text-emerald-400">1</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-emerald-400">
+                      Vouch for Friends
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Stake your reputation
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <span className="text-cyan-400">2</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-cyan-400">
+                      Build Trust Score
+                    </div>
+                    <div className="text-xs text-gray-400">0-1000 points</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <span className="text-purple-400">3</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-purple-400">Get Loans</div>
+                    <div className="text-xs text-gray-400">
+                      No collateral needed
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowOnboarding(false)}
+              className="text-gray-400 hover:text-white ml-4"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Trust Network Overview */}
       <div className="card-premium">
         <div className="flex items-center space-x-3 mb-6">

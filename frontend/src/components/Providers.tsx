@@ -5,15 +5,26 @@ import { WagmiProvider } from "wagmi";
 import { config } from "@/config/wagmi";
 import { ReactNode, useState, useEffect } from "react";
 import { ClientOnly } from "@/components/ClientOnly";
+import { cookieToInitialState } from "wagmi";
 
 const queryClient = new QueryClient();
 
-export function Providers({ children }: { children: ReactNode }) {
+interface ProvidersProps {
+  children: ReactNode;
+  cookies?: string | null;
+}
+
+export function Providers({ children, cookies }: ProvidersProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Get initial state from cookies for SSR
+  const initialState = cookies
+    ? cookieToInitialState(config, cookies)
+    : undefined;
 
   if (!mounted) {
     return (
@@ -37,7 +48,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ClientOnly>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={config} initialState={initialState}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>

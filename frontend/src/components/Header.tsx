@@ -1,7 +1,5 @@
 "use client";
 
-// Reown AppKit provides the button component automatically
-
 export function Header() {
   return (
     <header className="bg-dark-900/90 backdrop-blur-md border-b border-cyan-600/20 sticky top-0 z-50">
@@ -58,7 +56,7 @@ export function Header() {
             </a>
           </nav>
 
-          {/* Connect Button */}
+          {/* Connect Button - Using official AppKit web component */}
           <div className="flex items-center">
             <appkit-button />
           </div>

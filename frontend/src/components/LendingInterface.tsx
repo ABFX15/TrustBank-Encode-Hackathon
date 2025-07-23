@@ -114,8 +114,6 @@ export function LendingInterface() {
     proceedToDeposit,
   ]);
 
-  
-
   const handleDeposit = async () => {
     if (!amount || !contracts || !address) return;
 
@@ -220,6 +218,47 @@ export function LendingInterface() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Quick Guide */}
+      <div className="lg:col-span-2 card-premium bg-gradient-to-r from-cyan-900/20 to-purple-900/20">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+            <span className="text-xl">💡</span>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-cyan-400">
+              How TrustBank Works
+            </h3>
+            <p className="text-gray-300 text-sm">
+              Your trust score determines your borrowing power
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <span className="text-emerald-400 text-xs">1</span>
+            </div>
+            <span className="text-gray-300">Deposit USDC to earn yield</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
+              <span className="text-cyan-400 text-xs">2</span>
+            </div>
+            <span className="text-gray-300">
+              Build trust score through vouching
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
+              <span className="text-purple-400 text-xs">3</span>
+            </div>
+            <span className="text-gray-300">
+              Borrow up to $50k without collateral
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Deposit Section */}
       <div className="card-premium group">
         <div className="flex items-center space-x-3 mb-6">

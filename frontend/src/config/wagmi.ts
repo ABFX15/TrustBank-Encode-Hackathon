@@ -19,31 +19,35 @@ export const etherlinkTestnet = {
     testnet: true,
 } as const;
 
-// 1. Get projectId from https://cloud.reown.com
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID'
+// Get projectId from https://dashboard.reown.com
+export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
-// 2. Create a metadata object - optional
+if (!projectId) {
+    throw new Error('Project ID is not defined. Please set NEXT_PUBLIC_PROJECT_ID in your environment variables.')
+}
+
+// Set up metadata
 const metadata = {
     name: 'TrustBank',
     description: 'Trust-Based DeFi Banking Protocol',
-    url: 'https://trustbank.defi', // origin must match your domain & subdomain
-    icons: ['https://trustbank.defi/icon.png']
+    url: 'http://localhost:3000', // origin must match your domain & subdomain
+    icons: ['http://localhost:3000/favicon.ico']
 }
 
-// 3. Set the networks
+// Set the networks
 const networks = [
     etherlinkTestnet,
     ...(process.env.NODE_ENV === 'development' ? [hardhat, sepolia] : []),
 ]
 
-// 4. Create Wagmi Adapter
+// Create Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
     networks,
     projectId,
     ssr: true
 })
 
-// 5. Create modal
+// Create modal
 createAppKit({
     adapters: [wagmiAdapter],
     networks,
