@@ -1,59 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useState } from "react";
+import { Header } from "@/components/Header";
 import { WelcomePage } from "@/components/WelcomePage";
 import { DashboardPage } from "@/components/DashboardPage";
+import { Notification, useNotification } from "@/components/Notification";
 
-export default function HomePage() {
-  const { isConnected } = useAccount();
-  const [showDashboard, setShowDashboard] = useState(false);
+export default function Home() {
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
-
-  useEffect(() => {
-    // Check if user has seen welcome before
-    const seenWelcome = localStorage.getItem("trustbank-seen-welcome");
-    if (seenWelcome === "true") {
-      setHasSeenWelcome(true);
-      if (isConnected) {
-        setShowDashboard(true);
-      }
-    }
-  }, [isConnected]);
-
-  useEffect(() => {
-    // If user connects wallet and has seen welcome, go to dashboard
-    if (isConnected && hasSeenWelcome) {
-      setShowDashboard(true);
-    }
-  }, [isConnected, hasSeenWelcome]);
+  const { notification, showNotification, hideNotification } =
+    useNotification();
 
   const handleWelcomeComplete = () => {
-    localStorage.setItem("trustbank-seen-welcome", "true");
     setHasSeenWelcome(true);
-    setShowDashboard(true);
+    showNotification(
+      "success",
+      "Welcome to TrustBank!",
+      "Your Miami DeFi journey begins now."
+    );
   };
 
-  // Debug function to reset welcome state (remove in production)
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === "R") {
-        localStorage.removeItem("trustbank-seen-welcome");
-        setHasSeenWelcome(false);
-        setShowDashboard(false);
-        window.location.reload();
-      }
-    };
+  return (
+    <main className="min-h-screen relative overflow-hidden bg-miami-gradient">
+      {/* Subtle Palm Tree Silhouettes */}
+      <div className="absolute top-20 left-10 palm-tree"></div>
+      <div className="absolute top-40 right-10 palm-tree scale-x-[-1]"></div>
+      <div className="absolute bottom-20 left-20 palm-tree scale-75"></div>
+      <div className="absolute bottom-40 right-20 palm-tree scale-75 scale-x-[-1]"></div>
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+      <div className="relative z-10">
+        <Header />
 
-  // Show welcome page if user hasn't seen it or isn't connected
-  if (!hasSeenWelcome || (!isConnected && !showDashboard)) {
-    return <WelcomePage onWelcomeComplete={handleWelcomeComplete} />;
-  }
+        {!hasSeenWelcome ? (
+          <WelcomePage onWelcomeComplete={handleWelcomeComplete} />
+        ) : (
+          <DashboardPage />
+        )}
+      </div>
 
-  // Show dashboard if connected or if they've completed welcome
-  return <DashboardPage />;
+      {/* Notification */}
+      <Notification {...notification} onClose={hideNotification} />
+    </main>
+  );
 }

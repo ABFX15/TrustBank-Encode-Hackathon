@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { SpaceBackground } from "@/components/SpaceBackground";
-import { Typewriter } from "@/components/Typewriter";
+import { Typewriter } from "./Typewriter";
 
 interface WelcomePageProps {
   onWelcomeComplete: () => void;
@@ -33,45 +32,25 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
   }, [currentStep]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-black">
-      {/* Space Background */}
-      <SpaceBackground
-        starCount={300}
-        showShootingStars={true}
-        showNebula={true}
-      />
-
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 z-10" />
+    <div className="min-h-screen relative overflow-hidden bg-miami-gradient">
+      {/* Subtle Palm Tree Silhouettes */}
+      <div className="absolute top-20 left-10 palm-tree"></div>
+      <div className="absolute top-40 right-10 palm-tree scale-x-[-1]"></div>
+      <div className="absolute bottom-20 left-20 palm-tree scale-75"></div>
+      <div className="absolute bottom-40 right-20 palm-tree scale-75 scale-x-[-1]"></div>
 
       {/* Main content */}
-      <div className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4">
-        {/* Revolutionary Badge */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center px-8 py-4 rounded-full bg-emerald-900/40 border border-emerald-500/50 backdrop-blur-sm animate-pulse">
-            <div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping mr-4"></div>
-            <span className="text-emerald-400 text-lg font-bold tracking-wide uppercase">
-              Revolutionary DeFi Protocol
-            </span>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
+        {/* Logo */}
+        <div className="mb-8 animate-gentle-float">
+          <div className="w-24 h-24 rounded-2xl bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-400 flex items-center justify-center shadow-2xl shadow-cyan-400/50">
+            <span className="text-4xl font-black text-black">TB</span>
           </div>
         </div>
 
-        {/* Logo/Brand */}
-        <div className="mb-16 text-center">
-          <div className="w-32 h-32 rounded-2xl border-4 border-cyan-400 bg-black/80 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-cyan-500/30 backdrop-blur-sm">
-            <span className="text-cyan-400 font-black text-6xl">TB</span>
-          </div>
-          <h1 className="text-7xl md:text-8xl font-black gradient-text mb-4 leading-tight">
-            TRUSTBANK
-          </h1>
-          <div className="text-2xl md:text-3xl text-white/90 font-bold mb-6">
-            Uncollateralized Lending Protocol
-          </div>
-        </div>
-
-        {/* Main Message Carousel */}
+        {/* Main Message */}
         <div className="text-center mb-16 max-w-6xl">
-          <div className="bg-black/80 backdrop-blur-xl rounded-3xl border border-cyan-500/30 p-12 shadow-2xl shadow-cyan-500/20">
+          <div className="card-miami-premium p-12 shadow-2xl shadow-pink-400/30">
             <div className="mb-8">
               <Typewriter
                 text={welcomeSteps[currentStep]}
@@ -81,102 +60,104 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
             </div>
 
             {currentStep === 0 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed animate-fadeIn">
+              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
                 <span className="text-red-400 font-bold line-through">
                   No more 150% collateral
                 </span>
                 <br />
-                <span className="text-emerald-400 font-bold">
+                <span className="text-neon-cyan font-bold">
                   Borrow based on who trusts you
                 </span>
               </div>
             )}
 
             {currentStep === 1 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed animate-fadeIn">
-                <span className="text-cyan-400 font-bold">
+              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                <span className="text-miami-gradient font-bold">
                   Trust Score 850 = $50,000 credit limit
                 </span>
                 <br />
-                <span className="text-purple-400">
+                <span className="text-neon-pink">
                   Build reputation, unlock borrowing power
                 </span>
               </div>
             )}
 
             {currentStep === 2 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed animate-fadeIn">
-                <span className="text-emerald-400 font-bold">
+              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                <span className="text-neon-cyan font-bold">
                   Friends vouch for you on-chain
                 </span>
                 <br />
-                <span className="text-cyan-400">
+                <span className="text-miami-gradient">
                   Real relationships = Real credit
                 </span>
               </div>
             )}
 
             {currentStep === 3 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed animate-fadeIn">
-                <span className="text-emerald-400 font-bold">
-                  Your reputation can't be liquidated
+              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                <span className="text-neon-pink font-bold">
+                  No liquidations, no stress
                 </span>
                 <br />
-                <span className="text-purple-400">
-                  Trust-based lending, not asset-based
+                <span className="text-neon-cyan">
+                  Your reputation is your safety net
                 </span>
               </div>
             )}
 
             {currentStep === 4 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed animate-fadeIn">
-                <span className="text-cyan-400 font-bold">
-                  Connect wallet to start building
+              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+                <span className="text-miami-gradient font-bold">
+                  Join the future of decentralized banking
                 </span>
                 <br />
-                <span className="text-emerald-400">
-                  Your first vouch is just one click away
+                <span className="text-neon-pink">
+                  Where trust meets technology
                 </span>
               </div>
             )}
           </div>
         </div>
 
-        {/* How It Works Preview */}
+        {/* Step Cards */}
         {showContinue && (
-          <div className="mb-16 max-w-5xl animate-fadeIn">
+          <div className="mb-16 max-w-5xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-emerald-500/30 p-6 text-center">
+              <div className="card-miami p-6 text-center">
                 <div className="text-4xl mb-4">🤝</div>
-                <h3 className="text-xl font-bold text-emerald-400 mb-2">
+                <h3 className="text-xl font-bold text-neon-cyan mb-2">
                   Build Network
                 </h3>
                 <p className="text-gray-300 text-sm">
                   Connect & vouch for friends
                 </p>
-                <div className="text-emerald-400/80 text-xs mt-2">Step 1</div>
+                <div className="text-neon-cyan/80 text-xs mt-2">Step 1</div>
               </div>
 
-              <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-cyan-500/30 p-6 text-center">
+              <div className="card-miami p-6 text-center">
                 <div className="text-4xl mb-4">📊</div>
-                <h3 className="text-xl font-bold text-cyan-400 mb-2">
+                <h3 className="text-xl font-bold text-neon-pink mb-2">
                   Earn Trust Score
                 </h3>
                 <p className="text-gray-300 text-sm">
                   0-1000 reputation points
                 </p>
-                <div className="text-cyan-400/80 text-xs mt-2">Step 2</div>
+                <div className="text-neon-pink/80 text-xs mt-2">Step 2</div>
               </div>
 
-              <div className="bg-black/60 backdrop-blur-sm rounded-2xl border border-purple-500/30 p-6 text-center">
+              <div className="card-miami p-6 text-center">
                 <div className="text-4xl mb-4">💰</div>
-                <h3 className="text-xl font-bold text-purple-400 mb-2">
+                <h3 className="text-xl font-bold text-miami-gradient mb-2">
                   Get Loans
                 </h3>
                 <p className="text-gray-300 text-sm">
                   Up to $50k, no collateral
                 </p>
-                <div className="text-purple-400/80 text-xs mt-2">Step 3</div>
+                <div className="text-miami-gradient/80 text-xs mt-2">
+                  Step 3
+                </div>
               </div>
             </div>
           </div>
@@ -184,18 +165,18 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
 
         {/* Action Buttons */}
         {showContinue && (
-          <div className="text-center space-y-6 animate-fadeIn">
+          <div className="text-center space-y-6">
             <button
               onClick={onWelcomeComplete}
-              className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black font-bold text-2xl px-16 py-6 rounded-2xl shadow-2xl shadow-emerald-500/30 transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
+              className="btn-miami-primary text-2xl px-16 py-6 shadow-2xl shadow-cyan-400/30"
             >
               🚀 Start Building Trust Score
             </button>
 
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
               Join thousands earning credit through real relationships.
               <br />
-              <span className="text-emerald-400 font-semibold">
+              <span className="text-neon-cyan font-semibold">
                 Your reputation is your collateral.
               </span>
             </p>
@@ -210,7 +191,7 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index <= currentStep
-                    ? "bg-cyan-400 shadow-lg shadow-cyan-400/50"
+                    ? "bg-gradient-to-r from-cyan-400 to-pink-400 shadow-lg shadow-cyan-400/50"
                     : "bg-gray-600"
                 }`}
               />
@@ -219,26 +200,11 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
         </div>
 
         {/* Social Proof Footer */}
-        {showContinue && (
-          <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 animate-fadeIn">
-            <div className="flex items-center space-x-8 text-center">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-400">
-                  $2.4M+
-                </div>
-                <div className="text-xs text-gray-400">Uncollateralized</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-cyan-400">98.7%</div>
-                <div className="text-xs text-gray-400">Repayment Rate</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-400">5,200+</div>
-                <div className="text-xs text-gray-400">Trust Connections</div>
-              </div>
-            </div>
-          </div>
-        )}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
+          <p className="text-xs text-gray-400">
+            Trusted by 5,000+ users • $2.4M+ in uncollateralized loans
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -17,39 +17,20 @@
   }
 
   body {
-    @apply bg-dark-950 text-gray-100 min-h-screen;
+    @apply text-gray-100 min-h-screen;
     font-family: "Rajdhani", "Exo 2", "Inter", sans-serif;
     font-weight: 400;
     letter-spacing: 0.02em;
-    background-image: 
-      /* Animated gradient orbs */ radial-gradient(
-        circle at 20% 20%,
-        rgba(34, 211, 238, 0.15) 0%,
-        transparent 40%
-      ),
-      radial-gradient(
-        circle at 80% 80%,
-        rgba(8, 145, 178, 0.12) 0%,
-        transparent 40%
-      ),
-      radial-gradient(
-        circle at 40% 60%,
-        rgba(59, 130, 246, 0.08) 0%,
-        transparent 35%
-      ),
-      /* Subtle grid pattern */
-        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-      /* Base gradient */
-        linear-gradient(
-          135deg,
-          rgba(13, 13, 13, 1) 0%,
-          rgba(23, 23, 23, 0.95) 50%,
-          rgba(13, 13, 13, 1) 100%
-        );
-    background-size: 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px,
-      100% 100%;
+    background: linear-gradient(
+      135deg,
+      #1a0033 0%,
+      #4a0066 25%,
+      #ff0066 50%,
+      #ff6600 75%,
+      #ffaa00 100%
+    );
     background-attachment: fixed;
+    background-size: cover;
   }
 
   * {
@@ -57,357 +38,244 @@
   }
 }
 
+/* Simple, Elegant Animations */
+@keyframes gentleGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+  }
+  50% {
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+  }
+}
+
+@keyframes subtleFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes gentlePulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes palmTreeSway {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+
 @layer components {
-  .btn-primary {
-    @apply bg-cyan-gradient text-dark-900 font-semibold py-3 px-6 rounded-lg 
-           transition-all duration-300 shadow-cyan hover:shadow-cyan-lg 
-           hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed 
-           disabled:hover:scale-100 border border-cyan-600/20;
+  /* Miami Style Buttons */
+  .btn-miami-primary {
+    @apply bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-400 
+           text-black font-bold py-3 px-6 rounded-lg 
+           transition-all duration-300 shadow-lg
+           hover:shadow-cyan-400/50 hover:scale-105
+           border-2 border-white/20 backdrop-blur-sm;
   }
 
-  .btn-secondary {
-    @apply bg-dark-800 hover:bg-dark-700 text-cyan-400 font-medium py-3 px-6 
-           rounded-lg transition-all duration-300 border border-cyan-600/20 
-           hover:border-cyan-500/40 hover:shadow-cyan;
+  .btn-miami-secondary {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600
+           text-white font-bold py-3 px-6 rounded-lg
+           transition-all duration-300 shadow-lg
+           hover:shadow-pink-400/50 hover:scale-105
+           border-2 border-white/20 backdrop-blur-sm;
   }
 
-  .btn-outline {
-    @apply border border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 
-           font-medium py-3 px-6 rounded-lg transition-all duration-300 
-           hover:shadow-cyan hover:border-cyan-400;
+  .btn-miami-outline {
+    @apply border-2 border-cyan-400 text-cyan-400 
+           font-bold py-3 px-6 rounded-lg
+           transition-all duration-300
+           hover:bg-cyan-400 hover:text-black
+           hover:shadow-cyan-400/50 backdrop-blur-sm;
   }
 
-  .card {
-    @apply bg-dark-900/80 backdrop-blur-sm rounded-xl shadow-dark 
-           border border-cyan-600/10 p-6 hover:border-cyan-500/20 
-           transition-all duration-300 hover:shadow-cyan;
-  }
-
-  .card-premium {
-    @apply card bg-gradient-to-br from-dark-900 to-dark-800 
-           border-cyan-600/20 shadow-cyan-lg;
-  }
-
-  .input-field {
-    @apply w-full px-4 py-3 bg-dark-800 border border-cyan-600/20 
-           rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 
-           focus:border-cyan-500 text-gray-100 placeholder-gray-400 
+  /* Miami Style Cards */
+  .card-miami {
+    @apply bg-black/30 backdrop-blur-md rounded-xl 
+           border border-cyan-400/30 p-6
+           shadow-lg shadow-cyan-400/20
+           hover:border-cyan-400/60 hover:shadow-cyan-400/40
            transition-all duration-300;
   }
 
-  .input-premium {
-    @apply w-full px-4 py-3 bg-dark-800/80 border border-cyan-600/30 
-           rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 
-           focus:border-cyan-500 text-gray-100 placeholder-gray-400 
-           transition-all duration-300 backdrop-blur-sm
-           hover:border-cyan-500/50 hover:bg-dark-800/90;
+  .card-miami-premium {
+    @apply bg-gradient-to-br from-purple-900/40 to-pink-900/40
+           backdrop-blur-md rounded-xl border border-pink-400/30 p-6
+           shadow-lg shadow-pink-400/20
+           hover:border-pink-400/60 hover:shadow-pink-400/40
+           transition-all duration-300;
   }
 
-  .input-group {
-    @apply space-y-2;
+  /* Miami Style Inputs */
+  .input-miami {
+    @apply w-full px-4 py-3 bg-black/40 border-2 border-cyan-400/30 
+           rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 
+           focus:border-cyan-400 text-white placeholder-gray-400 
+           transition-all duration-300 backdrop-blur-sm;
   }
 
-  .input-group label {
-    @apply text-sm font-medium text-gray-300 block;
+  /* Miami Style Text Effects */
+  .text-miami-gradient {
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #ff6600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  .text-neon-pink {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+    animation: gentleGlow 3s ease-in-out infinite;
   }
 
-  .badge-success {
-    @apply badge bg-emerald-900/30 text-emerald-400 border border-emerald-500/20;
+  .text-neon-cyan {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+    animation: gentleGlow 3s ease-in-out infinite;
   }
 
-  .badge-warning {
-    @apply badge bg-blue-900/30 text-blue-400 border border-blue-500/20;
-  }
-
-  .badge-error {
-    @apply badge bg-red-900/30 text-red-400 border border-red-500/20;
-  }
-
-  .badge-cyan {
-    @apply badge bg-cyan-900/30 text-cyan-400 border border-cyan-500/20;
-  }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent;
-    font-family: "Orbitron", "Exo 2", monospace;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-
-  .hero-title {
-    @apply text-5xl md:text-6xl lg:text-8xl font-bold gradient-text 
-           leading-tight tracking-tight;
-    font-family: "Orbitron", "Exo 2", serif;
-    font-weight: 900;
-    letter-spacing: 0.02em;
-    text-shadow: 0 0 40px rgba(34, 211, 238, 0.3);
-    animation: glow 3s ease-in-out infinite alternate;
-  }
-
-  /* Web3/Crypto Typography Classes */
-  .text-cyber {
-    font-family: "Orbitron", monospace;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .text-tech {
-    font-family: "Rajdhani", "Exo 2", sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-  }
-
-  .text-futura {
-    font-family: "Exo 2", "Rajdhani", sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.03em;
-  }
-
-  .text-mono-tech {
-    font-family: "Space Mono", "JetBrains Mono", monospace;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-  }
-
-  @keyframes glow {
-    from {
-      text-shadow: 0 0 20px rgba(34, 211, 238, 0.5),
-        0 0 30px rgba(34, 211, 238, 0.3), 0 0 40px rgba(34, 211, 238, 0.2);
-    }
-    to {
-      text-shadow: 0 0 30px rgba(34, 211, 238, 0.8),
-        0 0 50px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.3);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
+  /* Miami Style Gradients */
+  .bg-miami-gradient {
     background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(245, 158, 11, 0.4),
-      transparent
+      135deg,
+      #1a0033 0%,
+      #4a0066 25%,
+      #ff0066 50%,
+      #ff6600 75%,
+      #ffaa00 100%
     );
-    background-size: 200% 100%;
-    animation: shimmer 3s infinite;
   }
 
-  .glow-border {
-    @apply border border-cyan-500/50 shadow-cyan;
+  .bg-miami-card {
+    background: linear-gradient(
+      135deg,
+      rgba(26, 0, 51, 0.8) 0%,
+      rgba(74, 0, 102, 0.8) 50%,
+      rgba(255, 0, 102, 0.8) 100%
+    );
+    backdrop-filter: blur(10px);
   }
 
-  .glass-effect {
-    @apply bg-dark-900/20 backdrop-blur-md border border-cyan-600/10;
+  /* Palm Tree Silhouettes */
+  .palm-tree {
+    position: absolute;
+    width: 100px;
+    height: 200px;
+    background: linear-gradient(to bottom, transparent 0%, black 100%);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    animation: palmTreeSway 6s ease-in-out infinite;
+    opacity: 0.15;
   }
 
-  /* Custom scrollbar */
+  .palm-tree-left {
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .palm-tree-right {
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%) scaleX(-1);
+  }
+
+  /* Miami Style Badges */
+  .badge-miami {
+    @apply px-3 py-1 rounded-full text-xs font-bold
+           bg-gradient-to-r from-cyan-400 to-pink-400
+           text-black shadow-lg;
+  }
+
+  .badge-miami-success {
+    @apply px-3 py-1 rounded-full text-xs font-bold
+           bg-gradient-to-r from-green-400 to-cyan-400
+           text-black shadow-lg;
+  }
+
+  .badge-miami-warning {
+    @apply px-3 py-1 rounded-full text-xs font-bold
+           bg-gradient-to-r from-yellow-400 to-orange-400
+           text-black shadow-lg;
+  }
+
+  /* Miami Style Navigation */
+  .nav-miami {
+    @apply bg-black/20 backdrop-blur-md border-b border-cyan-400/30
+           sticky top-0 z-50;
+  }
+
+  .nav-link-miami {
+    @apply text-gray-300 hover:text-cyan-400 transition-colors duration-200
+           font-bold relative overflow-hidden;
+  }
+
+  .nav-link-miami::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00ffff, #ff00ff);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link-miami:hover::after {
+    width: 100%;
+  }
+
+  /* Miami Style Loading */
+  .loading-miami {
+    @apply w-8 h-8 border-4 border-cyan-400/30 border-t-cyan-400
+           rounded-full animate-spin;
+  }
+
+  /* Miami Style Notifications */
+  .notification-miami {
+    @apply bg-black/40 backdrop-blur-md border border-cyan-400/30
+           rounded-lg p-4 shadow-lg shadow-cyan-400/20;
+  }
+
+  /* Animation Utilities */
+  .animate-gentle-float {
+    animation: subtleFloat 4s ease-in-out infinite;
+  }
+
+  .animate-gentle-pulse {
+    animation: gentlePulse 3s ease-in-out infinite;
+  }
+
+  /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-dark-900;
+    background: rgba(0, 0, 0, 0.3);
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-cyan-600 rounded-full;
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-cyan-500;
+    background: linear-gradient(45deg, #ff00ff, #ff6600);
   }
-}
-
-/* Custom animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
-  }
-}
-
-@keyframes typewriter-cursor {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* Typewriter animations */
-.typewriter-container {
-  @apply inline-block;
-}
-
-.typewriter-text {
-  @apply border-r-2 border-cyan-400 pr-1;
-  animation: typewriter-cursor 1s infinite;
-}
-
-.welcome-fade-in {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.connect-button-glow {
-  animation: pulse-glow 2s infinite;
-}
-
-/* Enhanced float animation for welcome page */
-@keyframes float-welcome {
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-10px) rotate(1deg);
-  }
-  66% {
-    transform: translateY(5px) rotate(-1deg);
-  }
-}
-
-.animate-float-welcome {
-  animation: float-welcome 6s ease-in-out infinite;
-}
-
-/* Gradient text animation */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animated-gradient-text {
-  background: linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4, #22d3ee);
-  background-size: 300% 300%;
-  animation: gradient-shift 3s ease infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Shooting star animation for space background */
-@keyframes shootingStar {
-  0% {
-    transform: translateX(0) translateY(0) scale(1);
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(300px) translateY(300px) scale(0);
-    opacity: 0;
-  }
-}
-
-.animate-shooting-star {
-  animation: shootingStar 1.5s linear forwards;
-}
-
-/* Enhanced space theme animations */
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-.animate-twinkle {
-  animation: twinkle 2s ease-in-out infinite;
-}
-
-@keyframes nebula-drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(10px, -10px) scale(1.05);
-  }
-  66% {
-    transform: translate(-10px, 10px) scale(0.95);
-  }
-}
-
-.animate-nebula-drift {
-  animation: nebula-drift 20s ease-in-out infinite;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-float-slow {
-  animation: float 8s ease-in-out infinite;
-}
-
-.animate-float-reverse {
-  animation: float 6s ease-in-out infinite reverse;
 }

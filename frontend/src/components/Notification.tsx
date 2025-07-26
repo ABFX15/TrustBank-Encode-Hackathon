@@ -1,121 +1,138 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  XMarkIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/24/outline";
 
-interface NotificationProps {
+export interface NotificationData {
   type: "success" | "error" | "warning" | "info";
   title: string;
   message?: string;
-  duration?: number;
-  onClose: () => void;
   isVisible: boolean;
+}
+
+interface NotificationProps extends NotificationData {
+  onClose: () => void;
 }
 
 export function Notification({
   type,
   title,
   message,
-  duration = 5000,
-  onClose,
   isVisible,
+  onClose,
 }: NotificationProps) {
+  const [isAnimating, setIsAnimating] = useState(false);
+
   useEffect(() => {
-    if (isVisible && duration > 0) {
+    if (isVisible) {
+      setIsAnimating(true);
       const timer = setTimeout(() => {
         onClose();
-      }, duration);
+      }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [isVisible, duration, onClose]);
-
-  const typeConfig = {
-    success: {
-      bgColor: "bg-green-900/90",
-      borderColor: "border-green-500/30",
-      iconColor: "text-green-400",
-      icon: CheckCircleIcon,
-    },
-    error: {
-      bgColor: "bg-red-900/90",
-      borderColor: "border-red-500/30",
-      iconColor: "text-red-400",
-      icon: ExclamationTriangleIcon,
-    },
-    warning: {
-      bgColor: "bg-yellow-900/90",
-      borderColor: "border-yellow-500/30",
-      iconColor: "text-yellow-400",
-      icon: ExclamationTriangleIcon,
-    },
-    info: {
-      bgColor: "bg-cyan-900/90",
-      borderColor: "border-cyan-500/30",
-      iconColor: "text-cyan-400",
-      icon: InformationCircleIcon,
-    },
-  };
-
-  const config = typeConfig[type];
-  const Icon = config.icon;
+  }, [isVisible, onClose]);
 
   if (!isVisible) return null;
 
+  const getIcon = () => {
+    switch (type) {
+      case "success":
+        return "✅";
+      case "error":
+        return "❌";
+      case "warning":
+        return "⚠️";
+      case "info":
+        return "ℹ️";
+      default:
+        return "ℹ️";
+    }
+  };
+
+  const getTypeStyles = () => {
+    switch (type) {
+      case "success":
+        return "border-green-400/30 shadow-green-400/20";
+      case "error":
+        return "border-red-400/30 shadow-red-400/20";
+      case "warning":
+        return "border-yellow-400/30 shadow-yellow-400/20";
+      case "info":
+        return "border-cyan-400/30 shadow-cyan-400/20";
+      default:
+        return "border-cyan-400/30 shadow-cyan-400/20";
+    }
+  };
+
+  const getTypeTextColor = () => {
+    switch (type) {
+      case "success":
+        return "text-green-400";
+      case "error":
+        return "text-red-400";
+      case "warning":
+        return "text-yellow-400";
+      case "info":
+        return "text-cyan-400";
+      default:
+        return "text-cyan-400";
+    }
+  };
+
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm">
-      <div
-        className={`${config.bgColor} ${config.borderColor} border backdrop-blur-md rounded-xl p-4 shadow-2xl transform transition-all duration-300 ease-in-out`}
-      >
+    <div
+      className={`fixed top-4 right-4 z-50 transform transition-all duration-300 ${
+        isAnimating ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+      }`}
+    >
+      <div className={`notification-miami ${getTypeStyles()} max-w-sm`}>
         <div className="flex items-start space-x-3">
-          <Icon
-            className={`h-6 w-6 ${config.iconColor} flex-shrink-0 mt-0.5`}
-          />
-          <div className="flex-1 min-w-0">
-            <h4 className="text-white font-semibold font-tech text-sm">
-              {title}
-            </h4>
-            {message && (
-              <p className="text-gray-300 text-sm mt-1 font-futura">
-                {message}
-              </p>
-            )}
+          <div className="flex-shrink-0">
+            <span className="text-2xl">{getIcon()}</span>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <XMarkIcon className="h-5 w-5" />
-          </button>
+          <div className="flex-1 min-w-0">
+            <h3 className={`text-sm font-bold ${getTypeTextColor()}`}>
+              {title}
+            </h3>
+            {message && <p className="text-sm text-gray-300 mt-1">{message}</p>}
+          </div>
+          <div className="flex-shrink-0">
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// Hook for managing notifications
 export function useNotification() {
-  const [notification, setNotification] = useState<{
-    type: "success" | "error" | "warning" | "info";
-    title: string;
-    message?: string;
-    isVisible: boolean;
-  } | null>(null);
+  const [notification, setNotification] = useState<NotificationData>({
+    type: "info",
+    title: "",
+    message: "",
+    isVisible: false,
+  });
 
   const showNotification = (
-    type: "success" | "error" | "warning" | "info",
+    type: NotificationData["type"],
     title: string,
     message?: string
   ) => {
-    setNotification({ type, title, message, isVisible: true });
+    setNotification({
+      type,
+      title,
+      message,
+      isVisible: true,
+    });
   };
 
   const hideNotification = () => {
-    setNotification((prev) => (prev ? { ...prev, isVisible: false } : null));
+    setNotification((prev) => ({ ...prev, isVisible: false }));
   };
 
   return {

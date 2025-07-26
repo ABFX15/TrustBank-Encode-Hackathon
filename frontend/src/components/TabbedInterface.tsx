@@ -70,15 +70,15 @@ export function TabbedInterface({
   return (
     <div className="max-w-7xl mx-auto">
       {/* Enhanced Tab Navigation */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8 p-2 bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-cyan-500/20">
+      <div className="flex flex-wrap justify-center gap-2 mb-8 p-2 card-miami rounded-2xl">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`group relative px-6 py-4 rounded-xl transition-all duration-300 ${
               activeTab === tab.id
-                ? "bg-cyan-gradient text-dark-900 shadow-lg shadow-cyan-500/25"
-                : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+                ? "bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-400 text-black shadow-lg shadow-cyan-400/25"
+                : "text-gray-300 hover:text-white hover:bg-black/20"
             }`}
           >
             <div className="flex items-center space-x-3">
@@ -91,15 +91,15 @@ export function TabbedInterface({
               </span>
               <div className="text-left">
                 <div
-                  className={`font-semibold text-lg ${
-                    activeTab === tab.id ? "text-dark-900" : ""
+                  className={`font-bold text-lg ${
+                    activeTab === tab.id ? "text-black" : ""
                   }`}
                 >
                   {tab.name}
                 </div>
                 <div
                   className={`text-sm ${
-                    activeTab === tab.id ? "text-dark-700" : "text-gray-400"
+                    activeTab === tab.id ? "text-black/70" : "text-gray-400"
                   }`}
                 >
                   {tab.description}
@@ -109,7 +109,7 @@ export function TabbedInterface({
 
             {/* Active Tab Indicator */}
             {activeTab === tab.id && (
-              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-cyan-400 rounded-full" />
+              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-black rounded-full" />
             )}
           </button>
         ))}
@@ -117,10 +117,10 @@ export function TabbedInterface({
 
       {/* Tab Content with Animation */}
       <div className="relative">
-        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-cyan-500/20 p-8 min-h-[600px]">
+        <div className="card-miami-premium p-8 min-h-[600px]">
           {/* Tab Header */}
           <div className="mb-6 text-center">
-            <h2 className="text-3xl font-bold gradient-text mb-2">
+            <h2 className="text-3xl font-bold text-miami-gradient mb-2">
               {currentTab.name}
             </h2>
             <p className="text-gray-400 text-lg">{currentTab.description}</p>
@@ -134,11 +134,11 @@ export function TabbedInterface({
 
         {/* Background decorations */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-xl animate-pulse"></div>
           <div
-            className="absolute bottom-10 right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-pulse"
+            className="absolute bottom-10 right-10 w-24 h-24 bg-pink-500/10 rounded-full blur-xl animate-pulse"
             style={{ animationDelay: "1s" }}
-          />
+          ></div>
         </div>
       </div>
     </div>

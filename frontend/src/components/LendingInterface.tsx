@@ -219,13 +219,13 @@ export function LendingInterface() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Quick Guide */}
-      <div className="lg:col-span-2 card-premium bg-gradient-to-r from-cyan-900/20 to-purple-900/20">
+      <div className="lg:col-span-2 card-miami-premium">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center">
             <span className="text-xl">💡</span>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-cyan-400">
+            <h3 className="text-lg font-bold text-neon-cyan">
               How TrustBank Works
             </h3>
             <p className="text-gray-300 text-sm">
@@ -235,22 +235,22 @@ export function LendingInterface() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-              <span className="text-emerald-400 text-xs">1</span>
+            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center">
+              <span className="text-cyan-400 text-xs font-bold">1</span>
             </div>
             <span className="text-gray-300">Deposit USDC to earn yield</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center">
-              <span className="text-cyan-400 text-xs">2</span>
+            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-pink-400 to-orange-400 flex items-center justify-center">
+              <span className="text-pink-400 text-xs font-bold">2</span>
             </div>
             <span className="text-gray-300">
               Build trust score through vouching
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
-              <span className="text-purple-400 text-xs">3</span>
+            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-cyan-400 flex items-center justify-center">
+              <span className="text-orange-400 text-xs font-bold">3</span>
             </div>
             <span className="text-gray-300">
               Borrow up to $50k without collateral
@@ -260,24 +260,20 @@ export function LendingInterface() {
       </div>
 
       {/* Deposit Section */}
-      <div className="card-premium group">
+      <div className="card-miami group">
         <div className="flex items-center space-x-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-emerald-900/30 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center">
             <span className="text-2xl">💎</span>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white font-tech text-tech">
-              Deposit USDC
-            </h2>
-            <p className="text-gray-400 text-sm font-futura text-futura">
-              Earn yield on your deposits
-            </p>
+            <h2 className="text-xl font-bold text-white">Deposit USDC</h2>
+            <p className="text-gray-400 text-sm">Earn yield on your deposits</p>
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3 font-tech text-tech">
+            <label className="block text-sm font-bold text-gray-300 mb-3">
               Amount
             </label>
             <div className="relative">
@@ -286,10 +282,10 @@ export function LendingInterface() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="input-field text-2xl font-mono pr-20"
+                className="input-miami text-2xl font-mono pr-20"
               />
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <span className="text-cyan-400 font-medium">USDC</span>
+                <span className="text-neon-cyan font-bold">USDC</span>
               </div>
             </div>
             <div className="flex justify-between text-xs text-gray-400 mt-2">
@@ -301,7 +297,7 @@ export function LendingInterface() {
               <div className="flex space-x-2">
                 <button
                   onClick={handleGetTestUSDC}
-                  className="text-blue-400 hover:text-blue-300"
+                  className="text-neon-pink hover:text-pink-300"
                   disabled={isPending}
                 >
                   Get Test USDC
@@ -312,7 +308,7 @@ export function LendingInterface() {
                       usdcBalance ? formatUnits(usdcBalance as bigint, 6) : "0"
                     )
                   }
-                  className="text-cyan-400 hover:text-cyan-300"
+                  className="text-neon-cyan hover:text-cyan-300"
                 >
                   MAX
                 </button>
@@ -320,14 +316,14 @@ export function LendingInterface() {
             </div>
           </div>
 
-          <div className="bg-dark-800/50 rounded-lg p-4 space-y-2">
+          <div className="card-miami p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Current APY</span>
-              <span className="text-emerald-400 font-medium">12.5%</span>
+              <span className="text-neon-cyan font-bold">12.5%</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Est. Monthly Earnings</span>
-              <span className="text-cyan-400 font-medium">
+              <span className="text-neon-pink font-bold">
                 {amount
                   ? `$${((parseFloat(amount) * 0.125) / 12).toFixed(2)}`
                   : "$0.00"}
@@ -338,11 +334,11 @@ export function LendingInterface() {
           <button
             onClick={handleDeposit}
             disabled={!amount || isPending || depositStep !== "idle"}
-            className="btn-primary w-full group-hover:shadow-cyan-lg"
+            className="btn-miami-primary w-full group-hover:shadow-cyan-400/50"
           >
             {isPending || depositStep !== "idle" ? (
               <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-dark-900/20 border-t-dark-900 rounded-full animate-spin"></div>
+                <div className="loading-miami"></div>
                 <span>
                   {depositStep === "approving"
                     ? "Approving..."
@@ -359,24 +355,20 @@ export function LendingInterface() {
       </div>
 
       {/* Borrow Section */}
-      <div className="card-premium group">
+      <div className="card-miami group">
         <div className="flex items-center space-x-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-blue-900/30 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-400 to-orange-400 flex items-center justify-center">
             <span className="text-2xl">🏦</span>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white font-tech text-tech">
-              Borrow USDC
-            </h2>
-            <p className="text-gray-400 text-sm font-futura text-futura">
-              Undercollateralized loans
-            </p>
+            <h2 className="text-xl font-bold text-white">Borrow USDC</h2>
+            <p className="text-gray-400 text-sm">Undercollateralized loans</p>
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
+            <label className="block text-sm font-bold text-gray-300 mb-3">
               Amount
             </label>
             <div className="relative">
@@ -385,57 +377,52 @@ export function LendingInterface() {
                 value={borrowAmount}
                 onChange={(e) => setBorrowAmount(e.target.value)}
                 placeholder="0.00"
-                className="input-field text-2xl font-mono pr-20"
+                className="input-miami text-2xl font-mono pr-20"
               />
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <span className="text-cyan-400 font-medium">USDC</span>
+                <span className="text-neon-pink font-bold">USDC</span>
               </div>
             </div>
             <div className="flex justify-between text-xs text-gray-400 mt-2">
-              <span>Available: 5,000.00 USDC</span>
-              <span className="text-cyan-400">Trust Score: 850</span>
+              <span>Max Loan: $50,000</span>
+              <button
+                onClick={() => setBorrowAmount("50")}
+                className="text-neon-pink hover:text-pink-300"
+              >
+                MAX
+              </button>
             </div>
           </div>
 
-          <div className="bg-dark-800/50 rounded-lg p-4 space-y-2">
+          <div className="card-miami p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Interest Rate</span>
-              <span className="text-blue-400 font-medium">8.5%</span>
+              <span className="text-neon-cyan font-bold">5.0%</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Monthly Payment</span>
-              <span className="text-red-400 font-medium">
-                {borrowAmount
-                  ? `$${((parseFloat(borrowAmount) * 0.085) / 12).toFixed(2)}`
-                  : "$0.00"}
-              </span>
+              <span className="text-gray-400">Loan Term</span>
+              <span className="text-neon-pink font-bold">30 days</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Collateral Required</span>
-              <span className="text-emerald-400 font-medium">None</span>
+              <span className="text-gray-400">Trust Score Required</span>
+              <span className="text-miami-gradient font-bold">100+</span>
             </div>
           </div>
 
           <button
             onClick={handleBorrow}
             disabled={!borrowAmount || isPending}
-            className="btn-primary w-full group-hover:shadow-cyan-lg"
+            className="btn-miami-secondary w-full group-hover:shadow-pink-400/50"
           >
             {isPending ? (
               <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-dark-900/20 border-t-dark-900 rounded-full animate-spin"></div>
+                <div className="loading-miami"></div>
                 <span>Processing...</span>
               </div>
             ) : (
               "Borrow USDC"
             )}
           </button>
-
-          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
-            <p className="text-blue-400 text-xs text-center">
-              💡 Borrowing requires trust network vouching
-            </p>
-          </div>
         </div>
       </div>
 

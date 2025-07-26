@@ -2,15 +2,19 @@
 
 export function Header() {
   return (
-    <header className="bg-dark-900/90 backdrop-blur-md border-b border-cyan-600/20 sticky top-0 z-50">
+    <header className="nav-miami">
+      {/* Palm Tree Silhouettes */}
+      <div className="palm-tree palm-tree-left"></div>
+      <div className="palm-tree palm-tree-right"></div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-lg bg-cyan-gradient flex items-center justify-center shadow-cyan">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center shadow-lg shadow-cyan-400/50">
                 <svg
-                  className="w-6 h-6 text-dark-900"
+                  className="w-6 h-6 text-black font-bold"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -18,11 +22,11 @@ export function Header() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold font-cyber text-cyber gradient-text">
+                <h1 className="text-2xl font-bold text-miami-gradient">
                   TrustBank
                 </h1>
-                <p className="text-xs text-cyan-400/70 -mt-1 font-mono-tech text-mono-tech">
-                  Premium DeFi
+                <p className="text-xs text-neon-cyan -mt-1 font-bold">
+                  MIAMI DEFI
                 </p>
               </div>
             </div>
@@ -30,29 +34,17 @@ export function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#"
-              className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 font-tech text-tech font-medium"
-            >
-              Lend
+            <a href="#" className="nav-link-miami">
+              LEND
             </a>
-            <a
-              href="#"
-              className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 font-tech text-tech font-medium"
-            >
-              Borrow
+            <a href="#" className="nav-link-miami">
+              BORROW
             </a>
-            <a
-              href="#"
-              className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 font-tech text-tech font-medium"
-            >
-              Trust Network
+            <a href="#" className="nav-link-miami">
+              TRUST NETWORK
             </a>
-            <a
-              href="#"
-              className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 font-tech text-tech font-medium"
-            >
-              Yield
+            <a href="#" className="nav-link-miami">
+              YIELD
             </a>
           </nav>
 
