@@ -32,12 +32,73 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
   }, [currentStep]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-miami-gradient">
-      {/* Subtle Palm Tree Silhouettes */}
-      <div className="absolute top-20 left-10 palm-tree"></div>
-      <div className="absolute top-40 right-10 palm-tree scale-x-[-1]"></div>
-      <div className="absolute bottom-20 left-20 palm-tree scale-75"></div>
-      <div className="absolute bottom-40 right-20 palm-tree scale-75 scale-x-[-1]"></div>
+    <div className="min-h-screen relative overflow-hidden synthwave-gradient">
+      {/* Palm Trees */}
+      <div className="absolute left-0 bottom-0 z-5 opacity-15">
+        <svg
+          width="200"
+          height="300"
+          viewBox="0 0 300 400"
+          fill="none"
+          className="palm-tree-left"
+        >
+          <path
+            d="M140 400 Q145 380 142 360 Q148 340 144 320 Q150 300 146 280 Q152 260 148 240 Q154 220 150 200 Q156 180 152 160 Q158 140 154 120 Q160 100 156 80"
+            stroke="black"
+            strokeWidth="6"
+            fill="none"
+            opacity="0.6"
+          />
+          <path
+            d="M156 80 Q120 40 80 20 Q60 10 40 15"
+            stroke="black"
+            strokeWidth="3"
+            fill="none"
+            opacity="0.4"
+          />
+          <path
+            d="M156 80 Q180 45 220 25 Q240 15 260 20"
+            stroke="black"
+            strokeWidth="3"
+            fill="none"
+            opacity="0.4"
+          />
+        </svg>
+      </div>
+      <div className="absolute right-0 bottom-0 z-5 opacity-15">
+        <svg
+          width="200"
+          height="300"
+          viewBox="0 0 300 400"
+          fill="none"
+          className="palm-tree-right"
+        >
+          <path
+            d="M160 400 Q155 380 158 360 Q152 340 156 320 Q150 300 154 280 Q148 260 152 240 Q146 220 150 200 Q144 180 148 160 Q142 140 146 120 Q140 100 144 80"
+            stroke="black"
+            strokeWidth="6"
+            fill="none"
+            opacity="0.6"
+          />
+          <path
+            d="M144 80 Q180 40 220 20 Q240 10 260 15"
+            stroke="black"
+            strokeWidth="3"
+            fill="none"
+            opacity="0.4"
+          />
+          <path
+            d="M144 80 Q120 45 80 25 Q60 15 40 20"
+            stroke="black"
+            strokeWidth="3"
+            fill="none"
+            opacity="0.4"
+          />
+        </svg>
+      </div>
+
+      {/* Grid lines for retro effect */}
+      <div className="absolute bottom-0 left-0 w-full h-32 grid-lines opacity-10 z-5"></div>
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
@@ -50,7 +111,7 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
 
         {/* Main Message */}
         <div className="text-center mb-16 max-w-6xl">
-          <div className="card-miami-premium p-12 shadow-2xl shadow-pink-400/30">
+          <div className="card-synthwave-premium p-12 shadow-2xl shadow-pink-500/40">
             <div className="mb-8">
               <Typewriter
                 text={welcomeSteps[currentStep]}
@@ -60,60 +121,60 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
             </div>
 
             {currentStep === 0 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+              <div className="text-xl md:text-2xl text-gray-200 leading-relaxed">
                 <span className="text-red-400 font-bold line-through">
                   No more 150% collateral
                 </span>
                 <br />
-                <span className="text-neon-cyan font-bold">
+                <span className="text-cyan-400 font-bold">
                   Borrow based on who trusts you
                 </span>
               </div>
             )}
 
             {currentStep === 1 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                <span className="text-miami-gradient font-bold">
+              <div className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+                <span className="text-cyan-400 font-bold">
                   Trust Score 850 = $50,000 credit limit
                 </span>
                 <br />
-                <span className="text-neon-pink">
+                <span className="text-pink-400">
                   Build reputation, unlock borrowing power
                 </span>
               </div>
             )}
 
             {currentStep === 2 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                <span className="text-neon-cyan font-bold">
+              <div className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+                <span className="text-cyan-400 font-bold">
                   Friends vouch for you on-chain
                 </span>
                 <br />
-                <span className="text-miami-gradient">
+                <span className="text-purple-300">
                   Real relationships = Real credit
                 </span>
               </div>
             )}
 
             {currentStep === 3 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                <span className="text-neon-pink font-bold">
+              <div className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+                <span className="text-pink-400 font-bold">
                   No liquidations, no stress
                 </span>
                 <br />
-                <span className="text-neon-cyan">
+                <span className="text-cyan-400">
                   Your reputation is your safety net
                 </span>
               </div>
             )}
 
             {currentStep === 4 && (
-              <div className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                <span className="text-miami-gradient font-bold">
+              <div className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+                <span className="text-purple-300 font-bold">
                   Join the future of decentralized banking
                 </span>
                 <br />
-                <span className="text-neon-pink">
+                <span className="text-pink-400">
                   Where trust meets technology
                 </span>
               </div>
@@ -125,39 +186,37 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
         {showContinue && (
           <div className="mb-16 max-w-5xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="card-miami p-6 text-center">
+              <div className="card-synthwave p-6 text-center">
                 <div className="text-4xl mb-4">🤝</div>
-                <h3 className="text-xl font-bold text-neon-cyan mb-2">
+                <h3 className="text-xl font-bold text-cyan-400 mb-2">
                   Build Network
                 </h3>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-200 text-sm">
                   Connect & vouch for friends
                 </p>
-                <div className="text-neon-cyan/80 text-xs mt-2">Step 1</div>
+                <div className="text-cyan-400/70 text-xs mt-2">Step 1</div>
               </div>
 
-              <div className="card-miami p-6 text-center">
+              <div className="card-synthwave p-6 text-center">
                 <div className="text-4xl mb-4">📊</div>
-                <h3 className="text-xl font-bold text-neon-pink mb-2">
+                <h3 className="text-xl font-bold text-pink-400 mb-2">
                   Earn Trust Score
                 </h3>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-200 text-sm">
                   0-1000 reputation points
                 </p>
-                <div className="text-neon-pink/80 text-xs mt-2">Step 2</div>
+                <div className="text-pink-400/70 text-xs mt-2">Step 2</div>
               </div>
 
-              <div className="card-miami p-6 text-center">
+              <div className="card-synthwave p-6 text-center">
                 <div className="text-4xl mb-4">💰</div>
-                <h3 className="text-xl font-bold text-miami-gradient mb-2">
+                <h3 className="text-xl font-bold text-purple-300 mb-2">
                   Get Loans
                 </h3>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-200 text-sm">
                   Up to $50k, no collateral
                 </p>
-                <div className="text-miami-gradient/80 text-xs mt-2">
-                  Step 3
-                </div>
+                <div className="text-purple-300/70 text-xs mt-2">Step 3</div>
               </div>
             </div>
           </div>
@@ -168,15 +227,15 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
           <div className="text-center space-y-6">
             <button
               onClick={onWelcomeComplete}
-              className="btn-miami-primary text-2xl px-16 py-6 shadow-2xl shadow-cyan-400/30"
+              className="bg-gradient-to-r from-pink-500 to-cyan-400 text-black font-bold text-2xl px-16 py-6 rounded-lg shadow-2xl shadow-pink-500/40 hover:scale-105 transition-all duration-300"
             >
               🚀 Start Building Trust Score
             </button>
 
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-200 text-lg max-w-2xl mx-auto">
               Join thousands earning credit through real relationships.
               <br />
-              <span className="text-neon-cyan font-semibold">
+              <span className="text-cyan-400 font-semibold">
                 Your reputation is your collateral.
               </span>
             </p>
@@ -191,7 +250,7 @@ export function WelcomePage({ onWelcomeComplete }: WelcomePageProps) {
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index <= currentStep
-                    ? "bg-gradient-to-r from-cyan-400 to-pink-400 shadow-lg shadow-cyan-400/50"
+                    ? "bg-gradient-to-r from-pink-500 to-cyan-400 shadow-lg shadow-pink-500/50"
                     : "bg-gray-600"
                 }`}
               />

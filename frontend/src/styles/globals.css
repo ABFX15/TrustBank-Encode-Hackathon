@@ -9,6 +9,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 
 @layer base {
   html {
@@ -122,6 +124,28 @@
            transition-all duration-300;
   }
 
+  /* Synthwave Style Cards */
+  .card-synthwave {
+    @apply bg-black/40 backdrop-blur-md rounded-xl 
+           border border-pink-500/40 p-6
+           shadow-lg shadow-pink-500/30
+           hover:border-cyan-400/60 hover:shadow-cyan-400/40
+           transition-all duration-300;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.4),
+      rgba(45, 27, 105, 0.2)
+    );
+  }
+
+  .card-synthwave-premium {
+    @apply bg-gradient-to-br from-purple-900/50 to-pink-900/50
+           backdrop-blur-md rounded-xl border border-pink-400/40 p-6
+           shadow-lg shadow-pink-400/30
+           hover:border-pink-400/70 hover:shadow-pink-400/50
+           transition-all duration-300;
+  }
+
   /* Miami Style Inputs */
   .input-miami {
     @apply w-full px-4 py-3 bg-black/40 border-2 border-cyan-400/30 
@@ -160,6 +184,20 @@
       #ff6600 75%,
       #ffaa00 100%
     );
+  }
+
+  /* Synthwave Gradient - matching the image */
+  .synthwave-gradient {
+    background: linear-gradient(
+      180deg,
+      #2d1b69 0%,
+      #5b2c87 20%,
+      #8b5a9f 40%,
+      #b388b5 60%,
+      #da91c7 80%,
+      #ff6ec7 100%
+    );
+    background-attachment: fixed;
   }
 
   .bg-miami-card {
@@ -240,6 +278,40 @@
     width: 100%;
   }
 
+  /* Synthwave Style Navigation */
+  .nav-synthwave {
+    @apply bg-black/30 backdrop-blur-md border-b border-pink-500/30
+           sticky top-0 z-50;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.3),
+      rgba(45, 27, 105, 0.2),
+      rgba(0, 0, 0, 0.3)
+    );
+  }
+
+  .nav-link-synthwave {
+    @apply text-gray-200 hover:text-pink-400 transition-all duration-300
+           font-bold relative overflow-hidden tracking-wider;
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+  }
+
+  .nav-link-synthwave::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff69b4, #00ffff);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+  }
+
+  .nav-link-synthwave:hover::after {
+    width: 100%;
+  }
+
   /* Miami Style Loading */
   .loading-miami {
     @apply w-8 h-8 border-4 border-cyan-400/30 border-t-cyan-400
@@ -259,6 +331,96 @@
 
   .animate-gentle-pulse {
     animation: gentlePulse 3s ease-in-out infinite;
+  }
+
+  /* Chrome Text Effect - Retro Metallic */
+  .chrome-text {
+    background: linear-gradient(
+      to bottom,
+      #c0c0c0 0%,
+      #f0f0f0 20%,
+      #ffffff 40%,
+      #e0e0e0 60%,
+      #cccccc 80%,
+      #a0a0a0 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    position: relative;
+    font-family: "Orbitron", monospace;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+
+  .chrome-text::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(to bottom, #808080 0%, #404040 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    z-index: -1;
+    transform: translate(2px, 2px);
+  }
+
+  /* Script/Cursive Text for "summer" */
+  .script-text {
+    font-family: "Dancing Script", "Pacifico", cursive;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(255, 105, 180, 0.8),
+      0 0 40px rgba(255, 105, 180, 0.4);
+    position: relative;
+    transform: rotate(-5deg);
+  }
+
+  /* Palm Trees Styling */
+  .palm-tree-left {
+    animation: palmTreeSway 8s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  .palm-tree-right {
+    animation: palmTreeSway 8s ease-in-out infinite reverse;
+    transform-origin: bottom center;
+  }
+
+  /* Grid Lines for Retro Effect */
+  .grid-lines {
+    background-image: linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.2) 1px,
+        transparent 1px
+      ),
+      linear-gradient(rgba(0, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: 50px 10px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(50px);
+    }
+  }
+
+  /* Enhanced palm tree sway animation */
+  @keyframes palmTreeSway {
+    0%,
+    100% {
+      transform: rotate(-2deg) translateX(-5px);
+    }
+    33% {
+      transform: rotate(1deg) translateX(2px);
+    }
+    66% {
+      transform: rotate(-1deg) translateX(-2px);
+    }
   }
 
   /* Custom Scrollbar */
