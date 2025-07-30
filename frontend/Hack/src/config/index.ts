@@ -20,12 +20,14 @@ const etherlink = {
   testnet: true,
 } as const
 
+// Get projectId from https://dashboard.reown.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "c23e6898b76c872cba5582bafd2a94c4"
 
 if (!projectId) {
   console.warn('⚠️  Please get your own Project ID from https://cloud.reown.com')
 }
 
+// Put Etherlink first as default
 export const networks = [etherlink, mainnet, arbitrum] as [AppKitNetwork, ...AppKitNetwork[]]
 
 //Set up the Wagmi Adapter (Config)
